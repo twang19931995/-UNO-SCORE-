@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNO INFINITY</title>
+    <title>UNO INFINITY 终极计分器</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -2489,25 +2489,12 @@
         </div>
 
 <!-- 1. 终极简化版：固定房间入口面板 -->
-        <div id="nlMainMenu" class="w-full max-w-[320px] flex flex-col gap-5 transition-all relative z-10">
-            <!-- 
-              ========================================================
-              【小白调节区：主机与观众身份选择按钮】
-              ========================================================
-            -->
-            <button onclick="window.nlStartHost()" class="w-full bg-[#FCA5A5] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
-                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是主机(房主)</span>
-                <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">裁判 / 控制全场数据</span>
-            </button>
-            <button onclick="window.nlStartClient()" class="w-full bg-[#A3D977] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
-                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是观众(选手)</span>
-                <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">查看 / 实时同步战况</span>
-            </button>
-            <div class="w-full h-[4px] bg-[#5E4B8B]/20 rounded-full my-1"></div>
-            <button onclick="window.nlStartSingle()" class="w-full bg-white border-[4px] border-[#5E4B8B] rounded-2xl py-3 flex items-center justify-center shadow-[0_4px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:bg-gray-50">
-                <span class="font-black text-[#5E4B8B] text-[18px] tracking-widest">单机离线模式</span>
-            </button>
-        </div>
+<div id="nlMainMenu" class="w-full max-w-[320px] flex flex-col gap-5 transition-all relative z-10">
+    <button onclick="window.nlStartPeer()" class="w-full bg-[#A3D977] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
+        <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">进入游戏</span>
+        <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">多端数据实时自动同步</span>
+    </button>
+</div>
 
         <!-- 2. 连接状态面板 -->
         <div id="nlConnectingMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-4 transition-all relative z-10">
@@ -2532,7 +2519,7 @@
             "https://i.ibb.co/79vNbp7/Q.png"
         ];
 
-        let gameData = { 
+let gameData = { 
             players:[], rounds:[], achievements: {}, 
             bgIndex: 0, cardBg: '#ffffff', 
             fonts: { num: "'Fredoka'", en: "'Fredoka'", zh: "'Microsoft YaHei', sans-serif" },
@@ -2540,6 +2527,8 @@
         presets:[], // 【新增】用来储存布局预设
             sectionOrder:[] 
         };
+        // 【新增】为当前设备生成一个临时唯一的“身份证”，用来在同步数据时过滤自己
+        window.myClientId = Math.random().toString(36).substring(2, 9);
         let redoStack =[];
         const defaultColors =['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7D794', '#F8A5C2', '#9AECDB', '#D6A2E8', '#55E6C1'];
 
@@ -3595,14 +3584,7 @@ function initCloudUI() {
                     tab.classList.add('w-1/5'); // 恢复原有的5等分，绝不破坏排版！
                 });
 
-                const disableBtnIds =['calculateBtn', 'undoBtn', 'redoBtn', 'resetBtn', 'importBtn', 'v2CalculateBtn', 'v2UndoBtn', 'v2RedoBtn', 'earlyWinBtn', 'addSessionBtn', 'penaltyAddBtn', 'penaltyUndoBtn', 'penaltyRedoBtn'];
-                disableBtnIds.forEach(id => {
-                    const btn = document.getElementById(id);
-                    if(btn) {
-                        btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
-                        btn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); alert("您当前处于观众模式，仅供查看，无法修改数据喔！"); };
-                    }
-                });
+
             } else {
                 hostPanel.classList.remove('hidden'); hostPanel.classList.add('flex');
                 audPanel.classList.add('hidden'); audPanel.classList.remove('flex');
@@ -4124,7 +4106,7 @@ bindTimeRecordEvents(); // 初始化时间记录模块事件
         };
 
         // [核心画笔] 把头像极其均匀地种在圆盘上 (包含线条隔断特效)
-window.rsSyncMode = 'free'; // 'free' 自由模式, 'strict' 生存模式
+window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
 
         window.toggleRSMode = function() {
             const btn = document.getElementById('rsModeToggleBtn');
@@ -4409,11 +4391,11 @@ window.rsSyncMode = 'free'; // 'free' 自由模式, 'strict' 生存模式
             if(typeof broadcastTimerState === 'function') broadcastTimerState();
         }
 
-        // 【新增函数】暂停计时器
+// 【修复函数】暂停计时器
         function stopTimer() {
             if(!isTimerRunning) return;
-            isTimerRunning = false;
-            timerRemainPaused = getTimerCurrentRemain();
+            timerRemainPaused = getTimerCurrentRemain(); // ★ 必须先计算并保存真实剩余时间！
+            isTimerRunning = false; // ★ 然后再关闭运行状态！
             clearInterval(timerInterval);
             clearTimeout(timerSoundTimeout);
             
@@ -8033,9 +8015,21 @@ function renderChart() {
         
         }
 
-        function saveData() {
+function saveData() {
+            // 【时间戳对比引擎】每次数据修改，烙印下最新的精确毫秒级时间戳
+            gameData.lastUpdated = Date.now();
             localStorage.setItem('unoInfinityPro', JSON.stringify(gameData));
             updateUndoRedoButtons();
+
+            // 如果已经连接上网络，自动把最新的数据打包分享给其他所有设备
+            if (mqttClient && myRole === 'peer') {
+                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
+                    action: 'SYNC_PEER_DATA',
+                    gameData: gameData,
+                    v2State: v2State,
+                    senderId: window.myClientId
+                }));
+            }
         }
         
 function updateUndoRedoButtons() {
@@ -8328,7 +8322,7 @@ function updateUndoRedoButtons() {
             els.excelFile.onchange = importExcel;
             els.closeImportResultBtn.onclick = () => els.importResultDialog.classList.add('hidden');
             
-            // 【新增】倒计时功能事件绑定
+// 【倒计时功能事件绑定 (绝对时间版)】
             const timerSetBtn = document.getElementById('timerSetBtn');
             const timerSetMin = document.getElementById('timerSetMin');
             const timerSubBtn = document.getElementById('timerSubBtn');
@@ -8336,43 +8330,81 @@ function updateUndoRedoButtons() {
             const timerToggleBtn = document.getElementById('timerToggleBtn');
             const timerResetBtn = document.getElementById('timerResetBtn');
 
-            timerSetBtn.onclick = () => {
-                let val = parseInt(timerSetMin.value);
-                if (!isNaN(val) && val > 0) {
-                    timerTotal = val * 60;
-                    timerRemain = timerTotal;
-                    stopTimer();
-                    updateTimerUI();
-                    timerSetMin.value = '';
-                }
-            };
-
-            timerSubBtn.onclick = () => {
-                timerRemain -= 30;
-                if (timerRemain < 0) timerRemain = 0;
-                updateTimerUI();
-            };
-
-            timerAddBtn.onclick = () => {
-                timerRemain += 30;
-                if (timerRemain > timerTotal) timerTotal = timerRemain;
-                updateTimerUI();
-            };
-
-            timerToggleBtn.onclick = () => {
-                if (isTimerRunning) {
-                    stopTimer();
-                } else {
-                    if (!audioCtx) {
-                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if(timerSetBtn) {
+                timerSetBtn.onclick = () => {
+                    let val = parseInt(timerSetMin.value);
+                    if (!isNaN(val) && val > 0) {
+                        timerTotal = val * 60;
+                        timerRemainPaused = timerTotal;
+                        if(typeof stopTimer === 'function') stopTimer(); 
+                        if(typeof updateTimerUI === 'function') updateTimerUI();
+                        timerSetMin.value = '';
                     }
-                    startTimer();
-                }
-            };
+                };
+            }
 
-            timerResetBtn.onclick = () => {
-                resetTimer();
-            };
+            if(timerSubBtn) {
+                timerSubBtn.onclick = () => {
+                    if (isTimerRunning) {
+                        timerTargetTimestamp -= 30000; // 前进30秒：目标时间提前30秒
+                    } else {
+                        timerRemainPaused -= 30;
+                        if (timerRemainPaused < 0) timerRemainPaused = 0;
+                    }
+                    if(typeof updateTimerUI === 'function') updateTimerUI();
+                    if(typeof broadcastTimerState === 'function') broadcastTimerState();
+                };
+            }
+
+            if(timerAddBtn) {
+                timerAddBtn.onclick = () => {
+                    if (isTimerRunning) {
+                        timerTargetTimestamp += 30000; // 增加30秒：目标时间推后30秒
+                        if ((timerTargetTimestamp - Date.now())/1000 > timerTotal) {
+                            timerTargetTimestamp = Date.now() + timerTotal * 1000; // 防超上限
+                        }
+                    } else {
+                        timerRemainPaused += 30;
+                        if (timerRemainPaused > timerTotal) timerRemainPaused = timerTotal;
+                    }
+                    if(typeof updateTimerUI === 'function') updateTimerUI();
+                    if(typeof broadcastTimerState === 'function') broadcastTimerState();
+                };
+            }
+
+            if(timerToggleBtn) {
+                timerToggleBtn.onclick = () => {
+                    if (isTimerRunning) {
+                        if(typeof stopTimer === 'function') stopTimer();
+                    } else {
+                        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        if(typeof startTimer === 'function') startTimer();
+                    }
+                };
+            }
+
+            if(timerResetBtn) {
+                timerResetBtn.onclick = () => {
+                    els.confirmMsg.innerText = "确定要清空并重置倒计时吗？";
+                    els.confirmDialog.classList.remove('hidden');
+                    
+                    const oldConfirm = els.confirmBtn.onclick;
+                    const oldCancel = els.cancelBtn.onclick;
+                    
+                    els.confirmBtn.onclick = () => { 
+                        if(typeof resetTimer === 'function') resetTimer(); 
+                        els.confirmDialog.classList.add('hidden');
+                        els.confirmBtn.onclick = oldConfirm;
+                        els.cancelBtn.onclick = oldCancel;
+                    };
+                    
+                    els.cancelBtn.onclick = () => { 
+                        els.confirmDialog.classList.add('hidden');
+                        els.confirmBtn.onclick = oldConfirm;
+                        els.cancelBtn.onclick = oldCancel;
+                    };
+                };
+            }
 
             // 场次记录事件绑定
             document.getElementById('addSessionBtn').onclick = () => {
@@ -9390,15 +9422,7 @@ const mobileTabs = {
         'tab10': { name: '卡牌信息', color: '#E0E7FF', modules:['cardInfoSection'] }  // 原来的卡牌顺延
     };
 
-// 【观众模式判断】：观众端隐藏 实时结算、数据备份、卡牌信息
-    if (typeof isAudienceMode !== 'undefined' && isAudienceMode) {
-        const t7 = document.querySelector('.mobile-tab-btn[data-tab="tab7"]');
-        const t8 = document.querySelector('.mobile-tab-btn[data-tab="tab8"]');
-        const t10 = document.querySelector('.mobile-tab-btn[data-tab="tab10"]'); // 抓取卡牌信息模块
-        if(t7) t7.style.setProperty('display', 'none', 'important');
-        if(t8) t8.style.setProperty('display', 'none', 'important');
-        if(t10) t10.style.setProperty('display', 'none', 'important'); // 强制隐藏
-    }
+
 
     let currentMobileTab = 'tab3';
 
@@ -13109,189 +13133,78 @@ if(btnSelRevive && btnSelUndo && btnConfirmUI) {
             setTimeout(() => document.getElementById('networkLobby').classList.add('hidden'), 500);
         };
 
-// 1. 点击【单机模式】
-        window.nlStartSingle = function() {
-            // 【新增：密码锁验证】
-            let pwd = prompt("【安全锁验证】\n请输入管理员密码以进入单机模式：");
-            if (pwd !== "TW19931995") {
-                alert("❌ 密码错误，访问被拒绝！");
-                return;
-            }
-            
-            myRole = 'single';
-            window.nlHideLobby();
-        };
-
-// ========================================================
-        // ★★★ 全新通讯逻辑：固定房间、防主机冲突、绝对时间接收 ★★★
-        // ========================================================
+const FIXED_ROOM_CODE = "UNO_VIP_8888"; // 房间号
         
-        const FIXED_ROOM_CODE = "UNO_VIP_8888"; // 【核心】房间号已被彻底焊死！所有人都在这！
-        let hostCheckTimeout = null;
-
-        // 【主机进入】
-        window.nlStartHost = function() {
-            let pwd = prompt("【安全锁】请输入主机密码：");
-            if (pwd !== "TW19931995") return alert("❌ 密码错误！");
-
+        // 【全新P2P对等模式加入游戏】
+        window.nlStartPeer = function() {
             document.getElementById('nlMainMenu').classList.add('hidden');
             document.getElementById('nlConnectingMenu').classList.remove('hidden');
             document.getElementById('nlConnectingMenu').classList.add('flex');
-            document.getElementById('nlConnectingText').textContent = "正在检测是否有主机占用...";
+            document.getElementById('nlConnectingText').textContent = "正在进入大厅并同步最新数据...";
 
             roomCode = FIXED_ROOM_CODE;
             mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
             mqttClient.on('connect', () => {
                 mqttClient.subscribe(`uno_room_${roomCode}`);
-                
-                // 魔法：大吼一声“有人是主机吗？”
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'WHO_IS_HOST' }));
-                
-                // 等待 1.5 秒，如果没人回话，我就光明正大当主机！
-                hostCheckTimeout = setTimeout(() => {
-                    myRole = 'host';
-                    window.nlHideLobby();
-                    if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
-                    alert("👑 房间抢占成功！您已成为全场唯一主机！");
-                    
-                    // 广播一次最新数据给可能在场的观众
-                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
-                        action: 'FULL_SYNC_DATA',
-                        gameData: gameData, v2State: v2State
-                    }));
-                }, 1500);
-            });
+                myRole = 'peer'; // 设定身份为对等节点，所有人平权
+                isAudienceMode = false; // 所有人均可修改和计算数据
 
-            mqttClient.on('message', window.handleMqttMessage);
-        };
+                // 主动在大厅高喊：有谁在线吗？把最新数据丢给我一份！
+                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ 
+                    action: 'REQ_PEER_LATEST', 
+                    senderId: window.myClientId 
+                }));
 
-        // 【观众/副机进入】
-        window.nlStartClient = function() {
-            document.getElementById('nlMainMenu').classList.add('hidden');
-            document.getElementById('nlConnectingMenu').classList.remove('hidden');
-            document.getElementById('nlConnectingMenu').classList.add('flex');
-            document.getElementById('nlConnectingText').textContent = "正在连接并拉取数据...";
-
-            roomCode = FIXED_ROOM_CODE;
-            mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-
-            mqttClient.on('connect', () => {
-                mqttClient.subscribe(`uno_room_${roomCode}`);
-                myRole = 'client';
-                isAudienceMode = true; // 强制设为只读模式
-                
-                // 向主机要数据
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
-                
-                // 2 秒后不管主机回没回，直接放进去（避免主机没上线时卡死进不去）
+                // 等待 1 秒同步时间，然后无缝进入游戏主页
                 setTimeout(() => {
                     window.nlHideLobby();
                     if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
-                    if (typeof window.applyClientRestrictions === 'function') window.applyClientRestrictions();
-                    alert("📱 已作为【观众】进入专属房间！\n如果数据没有同步，请等待主机上线或点击左上角拉取。");
-                }, 2000);
+                }, 1000);
             });
 
             mqttClient.on('message', window.handleMqttMessage);
         };
 
-// 6. 核心通讯中枢：处理对讲机里收到的所有广播
+// 6. 核心通讯中枢：处理对讲机里收到的所有广播（对等网络全自动同步引擎）
         window.handleMqttMessage = function(topic, message) {
             if (topic !== `uno_room_${roomCode}`) return;
             try {
                 const payload = JSON.parse(message.toString());
 
-                // 【情景 A】主机听到了副机的求救：把当前所有真实数据打包砸过去！
-                if (payload.action === 'REQ_FULL_SYNC' && myRole === 'host') {
-                    const syncData = {
-                        action: 'FULL_SYNC_DATA',
-                        gameData: gameData,
-                        v2State: v2State,
-                        // 发送主机的绝对时间戳
-                        trIsRunning: typeof trIsRunning !== 'undefined' ? trIsRunning : false,
-                        trAccumulatedMs: typeof trAccumulatedMs !== 'undefined' ? trAccumulatedMs : 0,
-                        trStartTimestamp: typeof trStartTimestamp !== 'undefined' ? trStartTimestamp : null,
-                        isTimerRunning: typeof isTimerRunning !== 'undefined' ? isTimerRunning : false,
-                        timerTotal: typeof timerTotal !== 'undefined' ? timerTotal : (8 * 60),
-                        timerRemainPaused: typeof timerRemainPaused !== 'undefined' ? timerRemainPaused : (8 * 60),
-                        timerTargetTimestamp: typeof timerTargetTimestamp !== 'undefined' ? timerTargetTimestamp : null
-                    };
-                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify(syncData));
-                }
-
-                // 【情景 B】副机接住了主机砸过来的全量数据！
-                if (payload.action === 'FULL_SYNC_DATA' && myRole === 'client') {
-                    // 1. 覆盖本地数据
-                    gameData = payload.gameData;
-                    if(payload.v2State) v2State = payload.v2State;
-                    saveData(); // 存入本地缓存
-
-                    // 2. 核心魔法：绝对时间解析与还原
-                    if (payload.trAccumulatedMs !== undefined) {
-                        trIsRunning = payload.trIsRunning;
-                        trAccumulatedMs = payload.trAccumulatedMs;
-                        trStartTimestamp = payload.trStartTimestamp;
-                        isTimerRunning = payload.isTimerRunning;
-                        timerTotal = payload.timerTotal;
-                        timerRemainPaused = payload.timerRemainPaused;
-                        timerTargetTimestamp = payload.timerTargetTimestamp;
-                        
-                        // 抹掉旧的死循环
-                        if(typeof trStopwatchInterval !== 'undefined' && trStopwatchInterval) clearInterval(trStopwatchInterval);
-                        if(typeof timerInterval !== 'undefined' && timerInterval) clearInterval(timerInterval);
-                        
-                        // 重新启动时间引擎
-                        if (trIsRunning) trStopwatchInterval = setInterval(updateTrDisplay, 200);
-                        else if (typeof updateTrDisplay === 'function') updateTrDisplay();
-
-                        if (isTimerRunning) timerInterval = setInterval(updateTimerUI, 200);
-                        else if (typeof updateTimerUI === 'function') updateTimerUI();
+                // 【P2P对等场景 A】：新加入的设备在呼叫最新数据
+                if (payload.action === 'REQ_PEER_LATEST' && myRole === 'peer') {
+                    // 如果自己不是新加入的人，并且本地拥有有效的数据，立刻回复当前最新状态
+                    if (payload.senderId !== window.myClientId && gameData.rounds.length > 0) {
+                        mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
+                            action: 'SYNC_PEER_DATA',
+                            gameData: gameData,
+                            v2State: v2State,
+                            senderId: window.myClientId
+                        }));
                     }
-
-                    // 3. 收到新数据立刻全屏疯狂刷新！！！
-                    gameData.currentSessionIndex = -1; // 强制回到全局视角
-                    if(typeof updateViewRounds === 'function') updateViewRounds();
-                    if(typeof recalculateStats === 'function') recalculateStats();
-                    if(typeof updateAllUI === 'function') updateAllUI();
-                    if(typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
-                }
-                
-                // 【情景 C：有人问谁是主机？】
-                if (payload.action === 'WHO_IS_HOST' && myRole === 'host') {
-                    // 我是主机！我马上大喊宣告主权！
-                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'I_AM_HOST' }));
                 }
 
-                // 【情景 D：我正在抢主机，但听到了别人的主权宣告！】
-                if (payload.action === 'I_AM_HOST' && hostCheckTimeout) {
-                    clearTimeout(hostCheckTimeout); // 取消我的登基大典
-                    hostCheckTimeout = null;
-                    mqttClient.end(); // 掐断对讲机
-                    alert("❌ 房间已被其他主机占用！同一房间仅允许一位主机。");
-                    document.getElementById('nlConnectingMenu').classList.add('hidden');
-                    document.getElementById('nlConnectingMenu').classList.remove('flex');
-                    document.getElementById('nlMainMenu').classList.remove('hidden');
-                }
+                // 【P2P对等场景 B】：接收其他设备同步过来的数据
+                if (payload.action === 'SYNC_PEER_DATA' && myRole === 'peer') {
+                    // 仅当：数据不是自己发的，且接收到的时间戳比本地的数据“更新”时，才进行覆盖
+                    const incomingTime = payload.gameData.lastUpdated || 0;
+                    const ourTime = gameData.lastUpdated || 0;
 
-                // 【情景 E：纯粹接听主机的时间跳动广播】
-                if (payload.action === 'SYNC_ABSOLUTE_TIMERS' && myRole === 'client') {
-                    trIsRunning = payload.trIsRunning;
-                    trAccumulatedMs = payload.trAccumulatedMs;
-                    trStartTimestamp = payload.trStartTimestamp;
-                    isTimerRunning = payload.isTimerRunning;
-                    timerTotal = payload.timerTotal;
-                    timerRemainPaused = payload.timerRemainPaused;
-                    timerTargetTimestamp = payload.timerTargetTimestamp;
-                    
-                    if(typeof trStopwatchInterval !== 'undefined' && trStopwatchInterval) clearInterval(trStopwatchInterval);
-                    if(typeof timerInterval !== 'undefined' && timerInterval) clearInterval(timerInterval);
-                    
-                    if (trIsRunning) trStopwatchInterval = setInterval(updateTrDisplay, 200);
-                    else if (typeof updateTrDisplay === 'function') updateTrDisplay();
+                    if (payload.senderId !== window.myClientId && incomingTime > ourTime) {
+                        gameData = payload.gameData;
+                        if(payload.v2State) v2State = payload.v2State;
+                        
+                        // 保存覆盖本地缓存
+                        localStorage.setItem('unoInfinityPro', JSON.stringify(gameData));
 
-                    if (isTimerRunning) timerInterval = setInterval(updateTimerUI, 200);
-                    else if (typeof updateTimerUI === 'function') updateTimerUI();
+                        // 强力重绘刷新大厅界面
+                        gameData.currentSessionIndex = -1;
+                        if(typeof updateViewRounds === 'function') updateViewRounds();
+                        if(typeof recalculateStats === 'function') recalculateStats();
+                        if(typeof updateAllUI === 'function') updateAllUI();
+                        if(typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
+                    }
                 }
 
             } catch(e) {
@@ -13972,20 +13885,7 @@ const earlyBtn = document.getElementById('earlyWinBtn');
             }
         });
 
-        // 拦截 2：副机误触别人胶囊
-        document.addEventListener('click', (e) => {
-            if (myRole === 'client') {
-                const cap = e.target.closest('.v2-player-cap');
-                if (cap) {
-                    const pid = parseInt(cap.dataset.id);
-                    if (pid !== mySeatId) {
-                        alert('📱 警告：作为副机，您只能操作【自己】的玩家位喔！');
-                        e.stopPropagation(); 
-                        return;
-                    }
-                }
-            }
-        }, true);
+
 
         // 拦截 3：★终极修复★ 监听 V2 所有弹窗的确认按钮，提取最终状态发给主机！
         document.body.addEventListener('click', (e) => {
@@ -14033,6 +13933,27 @@ const earlyBtn = document.getElementById('earlyWinBtn');
                 }, 500); 
             }
         });
+// ========================================================
+        // ★★★ 核心修复：随机抽选转盘与淘汰状态 100% 实时同步挂载 ★★★
+        // ========================================================
+        if (!window.rsV2ScoreAreaHooked) {
+            const origRenderV2ScoreAreaHook = window.renderV2ScoreArea;
+            // 劫持 renderV2ScoreArea (因为只要淘汰状态变了，这个函数绝对会被触发)
+            window.renderV2ScoreArea = function() {
+                if (origRenderV2ScoreAreaHook) origRenderV2ScoreAreaHook();
+                if (typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
+            };
+            window.rsV2ScoreAreaHooked = true;
+        }
+        
+        // 保险机制：在页面加载后，强制让按钮文字和颜色匹配默认的生存模式
+        setTimeout(() => {
+            const rsBtn = document.getElementById('rsModeToggleBtn');
+            if(rsBtn && window.rsSyncMode === 'strict') {
+                rsBtn.textContent = '当前：生存模式';
+                rsBtn.classList.replace('bg-[#9333EA]', 'bg-[#E11D48]');
+            }
+        }, 600);
 </script>
 </body>
 </html>
