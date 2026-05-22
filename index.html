@@ -1016,19 +1016,6 @@
                 <!-- 【新版 像素级复刻大转盘UI】 (默认显示) -->
                 <!-- ======================================================== -->
                 <div id="rsNewUI" class="w-full flex flex-col items-center">
-
-<!-- 
-                      ========================================================
-                      【小白调节区：转盘模式切换器】
-                      [用途] 控制转盘是【自由模式】(谁想上就上) 还是【生存模式】(被淘汰自动消失)。
-                      [背景色] bg-[#9333EA] 骚紫色
-                      ========================================================
-                    -->
-                    <div class="w-full flex justify-end px-2 sm:px-4 mt-2 mb-[-10px] z-40 relative">
-                        <button id="rsModeToggleBtn" class="bg-[#9333EA] border-[2.5px] border-[#5E4B8B] rounded-[8px] px-3 py-1 font-black text-white text-[10px] sm:text-xs shadow-[0_2px_0_#5E4B8B] active:translate-y-[2px] active:shadow-none transition-all" onclick="window.toggleRSMode()">
-                            当前：自由模式
-                        </button>
-                    </div>
                     
                     <!-- 
                       ========================================================
@@ -1134,7 +1121,7 @@
             </div>
 
 <!-- 下方控制按钮容器 (完美复刻倒计时UI) -->
-            <div class="flex justify-center items-center gap-4 sm:gap-6 w-full mt-2">
+            <div id="stopwatchButtonsWrapper" class="flex justify-center items-center gap-4 sm:gap-6 w-full mt-2">
                 
                 <!--
                   ========================================================
@@ -1187,7 +1174,7 @@
                 </div>
 
 
-                <div class="flex justify-center items-center gap-3 sm:gap-5">
+<div id="timerButtonsWrapper" class="flex justify-center items-center gap-3 sm:gap-5">
                     <button id="timerSubBtn" class="px-5 sm:px-6 py-1.5 sm:py-2 rounded-full bg-white border-[3px] sm:border-[4px] border-[#5E4B8B] text-[#5E4B8B] font-black text-xs sm:text-sm shadow-[0_4px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all">-30s</button>
                     <button id="timerToggleBtn" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#4ADE80] text-white border-[3px] sm:border-[4px] border-[#5E4B8B] flex items-center justify-center font-black text-lg shadow-[0_4px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all">
                         <i class="fa-solid fa-play ml-1"></i>
@@ -2488,21 +2475,67 @@
             </div>
         </div>
 
-<!-- 1. 终极简化版：固定房间入口面板 -->
-<div id="nlMainMenu" class="w-full max-w-[320px] flex flex-col gap-5 transition-all relative z-10">
-    <button onclick="window.nlStartPeer()" class="w-full bg-[#A3D977] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
-        <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">进入游戏</span>
-        <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">多端数据实时自动同步</span>
-    </button>
-</div>
+<!-- 1. 主菜单面板 (选择身份) (加上 z-10 和 relative) -->
+        <div id="nlMainMenu" class="w-full max-w-[320px] flex flex-col gap-5 transition-all relative z-10">
+            <button onclick="window.nlSelectIdentity('host')" class="w-full bg-[#FCA5A5] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
+                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是裁判</span>
+                <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">(管理对局与倒计时进度)</span>
+            </button>
+            <button onclick="window.nlSelectIdentity('client')" class="w-full bg-[#A3D977] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
+                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是玩家</span>
+                <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">(挑选座位并输入局内分数)</span>
+            </button>
+            <button onclick="window.nlSelectIdentity('spectator')" class="w-full bg-[#93C5FD] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
+                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是观众</span>
+                <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">(只读观战：实时看分数和时间)</span>
+            </button>
+        </div>
 
-        <!-- 2. 连接状态面板 -->
-        <div id="nlConnectingMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-4 transition-all relative z-10">
+        <!-- 2. 创建房间面板 (主机：生成中特效) (加上 z-10 和 relative) -->
+        <div id="nlCreateMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-4 transition-all relative z-10">
             <div class="bg-white border-[4px] border-[#5E4B8B] rounded-2xl p-6 w-full flex flex-col items-center shadow-[0_6px_0_#5E4B8B]">
                 <i class="fa-solid fa-satellite-dish text-5xl text-[#5FA4FA] mb-4 animate-pulse"></i>
-                <span id="nlConnectingText" class="font-black text-[#5E4B8B] text-lg tracking-widest text-center">正在连接专属服务器...</span>
+                <span class="font-black text-[#5E4B8B] text-lg tracking-widest">正在连接对讲机频道...</span>
             </div>
         </div>
+
+        <!-- 3. 创建成功：展示 6 位数房间号 (主机) (加上 z-10 和 relative) -->
+        <div id="nlHostRoomMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-6 transition-all relative z-10">
+            <div class="bg-white border-[4px] border-[#5E4B8B] rounded-2xl p-6 w-full flex flex-col items-center shadow-[0_6px_0_#5E4B8B]">
+                <span class="font-bold text-gray-400 text-sm mb-2 tracking-widest">您的房间号</span>
+                <span id="nlHostRoomCode" class="font-black text-[#E11D48] text-[55px] tracking-widest leading-none mb-2 drop-shadow-sm">------</span>
+                <span class="font-bold text-[#5FA4FA] text-xs">请让玩家输入此号码加入</span>
+            </div>
+            <button onclick="window.nlEnterGameAsHost()" class="w-full bg-[#5FA4FA] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all">
+                <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">进入游戏</span>
+            </button>
+        </div>
+
+        <!-- 4. 加入房间：输入面板 (副机) (加上 z-10 和 relative) -->
+        <div id="nlJoinMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-5 transition-all relative z-10">
+            <div class="bg-white border-[4px] border-[#5E4B8B] rounded-2xl p-6 w-full flex flex-col items-center shadow-[0_6px_0_#5E4B8B]">
+                <span class="font-black text-[#5E4B8B] text-xl mb-4 tracking-widest">输入房间号</span>
+                <input type="number" id="nlJoinCodeInput" placeholder="6位数字" class="w-full bg-gray-100 border-[3px] border-[#5E4B8B] rounded-xl text-center text-[35px] font-black text-[#E11D48] py-2 focus:outline-none focus:ring-4 focus:ring-[#A3D977]/50 transition-all tracking-widest" oninput="if(this.value.length>6)this.value=this.value.slice(0,6)">
+            </div>
+            <div class="flex gap-3 w-full">
+                <button onclick="window.nlBackToMain()" class="w-1/3 bg-gray-300 border-[4px] border-[#5E4B8B] rounded-xl py-3 flex items-center justify-center shadow-[0_4px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all">
+                    <span class="font-black text-white text-lg text-stroke" style="-webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">返回</span>
+                </button>
+                <button onclick="window.nlConfirmJoin()" id="nlConfirmJoinBtn" class="flex-1 bg-[#A3D977] border-[4px] border-[#5E4B8B] rounded-xl py-3 flex items-center justify-center shadow-[0_4px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all">
+                    <span class="font-black text-white text-xl tracking-widest text-stroke" style="-webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">连接房间</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. 加入成功：选择座位面板 (副机) (加上 z-10 和 relative) -->
+        <div id="nlSeatMenu" class="w-full max-w-[320px] hidden flex-col items-center gap-4 transition-all relative z-10">
+            <div class="bg-white border-[4px] border-[#5E4B8B] rounded-2xl p-4 w-full flex flex-col items-center shadow-[0_6px_0_#5E4B8B]">
+                <span class="font-black text-[#5E4B8B] text-lg mb-3 tracking-widest">请选择您的专属座位</span>
+                <span class="font-bold text-gray-400 text-[10px] mb-3 text-center">副机只能操作自己的数据<br>请务必选对自己的名字！</span>
+                <div id="nlSeatGrid" class="grid grid-cols-3 gap-2 w-full">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
         </div>
 
     </div>
@@ -2519,7 +2552,7 @@
             "https://i.ibb.co/79vNbp7/Q.png"
         ];
 
-let gameData = { 
+        let gameData = { 
             players:[], rounds:[], achievements: {}, 
             bgIndex: 0, cardBg: '#ffffff', 
             fonts: { num: "'Fredoka'", en: "'Fredoka'", zh: "'Microsoft YaHei', sans-serif" },
@@ -2527,8 +2560,6 @@ let gameData = {
         presets:[], // 【新增】用来储存布局预设
             sectionOrder:[] 
         };
-        // 【新增】为当前设备生成一个临时唯一的“身份证”，用来在同步数据时过滤自己
-        window.myClientId = Math.random().toString(36).substring(2, 9);
         let redoStack =[];
         const defaultColors =['#FF6B6B', '#4ECDC4', '#45B7D1', '#F7D794', '#F8A5C2', '#9AECDB', '#D6A2E8', '#55E6C1'];
 
@@ -2829,67 +2860,62 @@ let chartInstance = null;
         let timerRemain = 8 * 60;
 
 
-// ========================================================
-        // ★★★ 全新绝对时间戳引擎 - 正计时 (彻底解决多端时间拉扯BUG) ★★★
-        // ========================================================
+// --- 【新增】时间记录模块专属变量 ---
         let trStopwatchInterval = null;
-        let trAccumulatedMs = 0;   // 已经积累的毫秒数
-        let trStartTimestamp = null; // 绝对开始时间戳
+        let trElapsedSeconds = 0; // 累计秒数
         let trIsRunning = false;
         let trCurrentView = 'realtime'; 
-        let trSortMode = 'round'; 
-        let trSortDesc = true;    
-        window.trElapsedSeconds = 0; // 兼容旧系统的秒数变量
+        let trSortMode = 'round'; // 'round' 轮次, 'elapsed' 耗时, 'remain' 剩余
+        let trSortDesc = true;    // true 为降序(从大到小), false 为升序
 
+        // --- 【新增】时间记录模块核心功能 ---
+        // 格式化时间为 00:00 的函数 (这个绝对不能删！)
         function formatTrTime(seconds) {
             const m = String(Math.floor(seconds / 60)).padStart(2, '0');
             const s = String(seconds % 60).padStart(2, '0');
             return `${m}:${s}`;
         }
 
-        // 获取秒表当前真实的秒数 (核心公式：绝对时间)
-        function getTrCurrentSeconds() {
-            if (!trIsRunning) return Math.floor(trAccumulatedMs / 1000);
-            return Math.floor((trAccumulatedMs + (Date.now() - trStartTimestamp)) / 1000);
-        }
-
+        // 更新电子屏幕的显示
         function updateTrDisplay() {
-            window.trElapsedSeconds = getTrCurrentSeconds(); 
             const display = document.getElementById('trStopwatchDisplay');
-            if (display) display.textContent = formatTrTime(window.trElapsedSeconds);
+            if (display) display.textContent = formatTrTime(trElapsedSeconds);
         }
 
+// 开始计时
         function startTrStopwatch() {
             if (trIsRunning) return;
+            if (myRole === 'client') return; // 【拒绝拉扯】如果是玩家或观众，拒绝本地自主跑秒，全程听主机指挥
             trIsRunning = true;
-            trStartTimestamp = Date.now();
-            if(trStopwatchInterval) clearInterval(trStopwatchInterval);
-            trStopwatchInterval = setInterval(updateTrDisplay, 200); // 200ms刷新一次UI，更平滑
-            if(typeof broadcastTimerState === 'function') broadcastTimerState(); // 通知全网
+            trStopwatchInterval = setInterval(() => {
+                trElapsedSeconds++;
+                localStorage.setItem('unoTrElapsedSeconds', trElapsedSeconds); // 实时固化保存秒数
+                updateTrDisplay();
+                // 如果是主机，时钟每次跳动时自动向全场毫秒级同步，干掉时间拉扯
+                if (myRole === 'host' && typeof window.broadcastTimeSync === 'function') {
+                    window.broadcastTimeSync();
+                }
+            }, 1000);
         }
 
+        // 暂停计时
         function pauseTrStopwatch() {
             if (!trIsRunning) return;
             trIsRunning = false;
-            trAccumulatedMs += (Date.now() - trStartTimestamp);
             clearInterval(trStopwatchInterval);
-            updateTrDisplay();
-            if(typeof broadcastTimerState === 'function') broadcastTimerState();
         }
 
+        // 重置计时
         function resetTrStopwatch() {
-            trIsRunning = false;
-            trAccumulatedMs = 0;
-            trStartTimestamp = null;
-            window.trElapsedSeconds = 0;
-            clearInterval(trStopwatchInterval);
+            pauseTrStopwatch();
+            trElapsedSeconds = 0;
             updateTrDisplay();
             const btnToggle = document.getElementById('trToggleBtn');
             if (btnToggle) {
                 btnToggle.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
-                btnToggle.classList.replace('bg-[#F59E0B]', 'bg-[#4ADE80]');
+                btnToggle.classList.remove('bg-[#F59E0B]');
+                btnToggle.classList.add('bg-[#4ADE80]');
             }
-            if(typeof broadcastTimerState === 'function') broadcastTimerState();
         }
 
 // 渲染图1的历史记录列表（严格复刻容器5）
@@ -3584,7 +3610,14 @@ function initCloudUI() {
                     tab.classList.add('w-1/5'); // 恢复原有的5等分，绝不破坏排版！
                 });
 
-
+                const disableBtnIds =['calculateBtn', 'undoBtn', 'redoBtn', 'resetBtn', 'importBtn', 'v2CalculateBtn', 'v2UndoBtn', 'v2RedoBtn', 'earlyWinBtn', 'addSessionBtn', 'penaltyAddBtn', 'penaltyUndoBtn', 'penaltyRedoBtn'];
+                disableBtnIds.forEach(id => {
+                    const btn = document.getElementById(id);
+                    if(btn) {
+                        btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+                        btn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); alert("您当前处于观众模式，仅供查看，无法修改数据喔！"); };
+                    }
+                });
             } else {
                 hostPanel.classList.remove('hidden'); hostPanel.classList.add('flex');
                 audPanel.classList.add('hidden'); audPanel.classList.remove('flex');
@@ -3757,7 +3790,7 @@ function init() {
                 e.target.value = '';
             };
             
-            const saved = localStorage.getItem('unoInfinityPro');
+const saved = localStorage.getItem('unoInfinityPro');
             let dataValid = false;
             
             if (saved) {
@@ -3765,6 +3798,31 @@ function init() {
                     const parsed = JSON.parse(saved);
                     if (parsed && Array.isArray(parsed.players) && parsed.players.length > 0) {
                         gameData = parsed;
+                        
+                        // 【恢复局中状态】加载未结束的进行中局次与计时器进度
+                        const savedV2 = localStorage.getItem('unoV2State');
+                        if (savedV2) {
+                            try { v2State = JSON.parse(savedV2); } catch(e) { console.error(e); }
+                        }
+                        const savedTR = localStorage.getItem('unoTimerRemain');
+                        if (savedTR !== null) timerRemain = parseInt(savedTR);
+                        const savedStopwatch = localStorage.getItem('unoTrElapsedSeconds');
+                        if (savedStopwatch !== null) trElapsedSeconds = parseInt(savedStopwatch);
+                        
+                        // 延迟恢复界面
+                        setTimeout(() => {
+                            if (typeof updateTimerUI === 'function') updateTimerUI();
+                            if (typeof updateTrDisplay === 'function') updateTrDisplay();
+                        }, 150);
+
+                        // 恢复后，如果刷新前计时器正在进行，自动重启时钟
+                        const savedIsTimerRunning = localStorage.getItem('unoIsTimerRunning');
+                        const savedTrIsRunning = localStorage.getItem('unoTrIsRunning');
+                        setTimeout(() => {
+                            if (savedIsTimerRunning === 'true') startTimer();
+                            if (savedTrIsRunning === 'true') startTrStopwatch();
+                        }, 600);
+
                         if (!gameData.fonts) gameData.fonts = { num: "'Fredoka'", en: "'Fredoka'", zh: "'Microsoft YaHei', sans-serif" };
                         if (!gameData.sessions) gameData.sessions =[];
                         if (!gameData.sectionOrder) gameData.sectionOrder = [...defaultSectionOrder];
@@ -3811,9 +3869,10 @@ updateViewRounds(); // 【新增】启动时先分配好当前的区间数据
             updateTimerUI(); // 初始化计时器 UI
 bindV2Events(); // 【V2新增】激活我们的新事件
 bindTimeRecordEvents(); // 初始化时间记录模块事件
-        resetV2State(); // 【V2新增】初始化所有淘汰状态
-// 【新增】：启动大厅华丽背景马达！
+resetV2State(); // 【V2新增】初始化所有淘汰状态
+            // 【新增】：启动大厅背景并自动秒连MQTT
             if(typeof window.renderLobbyBackground === 'function') window.renderLobbyBackground();
+            if(typeof window.nlAutoConnect === 'function') window.nlAutoConnect();
         } // 这是 init() 的结尾大括号
         
 
@@ -4106,23 +4165,6 @@ bindTimeRecordEvents(); // 初始化时间记录模块事件
         };
 
         // [核心画笔] 把头像极其均匀地种在圆盘上 (包含线条隔断特效)
-window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
-
-        window.toggleRSMode = function() {
-            const btn = document.getElementById('rsModeToggleBtn');
-            if (window.rsSyncMode === 'free') {
-                window.rsSyncMode = 'strict';
-                btn.textContent = '当前：生存模式';
-                btn.classList.replace('bg-[#9333EA]', 'bg-[#E11D48]'); // 变成红色预警
-            } else {
-                window.rsSyncMode = 'free';
-                btn.textContent = '当前：自由模式';
-                btn.classList.replace('bg-[#E11D48]', 'bg-[#9333EA]');
-            }
-            window.renderRandomSelectorV2(); // 立刻重绘转盘
-        };
-
-        // [核心画笔] 把头像极其均匀地种在圆盘上 (包含线条隔断特效)
         window.renderRandomSelectorV2 = function() {
             const wheel = document.getElementById('rsWheel');
             const itemsContainer = document.getElementById('rsWheelItems');
@@ -4130,48 +4172,32 @@ window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
             if(!wheel || !itemsContainer || !togglesContainer) return;
 
             const active = gameData.players.filter(p => p.isActive);
-            // 提取所有没被淘汰的人
             const alive = active.filter(p => !(v2State && v2State.eliminated && v2State.eliminated[p.id]));
             
-            // 底部控制胶囊只在自由模式显示，生存模式下强行隐藏并交由底层控制！
-            if (window.rsSyncMode === 'strict') {
-                togglesContainer.classList.add('hidden');
-                togglesContainer.classList.remove('grid');
-            } else {
-                togglesContainer.classList.remove('hidden');
-                togglesContainer.classList.add('grid');
-                let togglesHtml = '';
-                alive.forEach(p => {
-                    let isExcluded = window.rsExcludedPlayers.has(p.id);
-                    let opacityClass = isExcluded ? 'opacity-40 grayscale' : 'opacity-100';
-                    let shortName = p.name ? p.name.slice(-1) : '?';
-                    
-                    togglesHtml += `
-                    <div class="flex items-center justify-center border-[2.5px] border-[#5E4B8B] rounded-[8px] px-1 py-[3px] shadow-[0_3px_0_#5E4B8B] cursor-pointer transition-all ${opacityClass} active:translate-y-1 active:shadow-none rs-toggle-btn" style="background-color: ${p.color};" onclick="window.toggleRSParticipant(${p.id})">
-                        <div class="w-6 h-6 sm:w-[18px] sm:h-[18px] rounded-[4px] border-[1.5px] border-[#5E4B8B] bg-black overflow-hidden shrink-0 flex items-center justify-center">
-                            <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
-                        </div>
-                        <span class="font-black text-white text-[16px] sm:text-[13px] text-stroke pl-1 leading-none">${shortName}</span>
-                    </div>`;
-                });
-                togglesContainer.innerHTML = togglesHtml;
-            }
+            let togglesHtml = '';
+            alive.forEach(p => {
+                let isExcluded = window.rsExcludedPlayers.has(p.id);
+                let opacityClass = isExcluded ? 'opacity-40 grayscale' : 'opacity-100';
+                let shortName = p.name ? p.name.slice(-1) : '?';
+                
+                togglesHtml += `
+                <div class="flex items-center justify-center border-[2.5px] border-[#5E4B8B] rounded-[8px] px-1 py-[3px] shadow-[0_3px_0_#5E4B8B] cursor-pointer transition-all ${opacityClass} active:translate-y-1 active:shadow-none rs-toggle-btn" data-id="${p.id}" style="background-color: ${p.color};" onclick="window.toggleRSParticipant(${p.id})">
+                    <div class="w-6 h-6 sm:w-[18px] sm:h-[18px] rounded-[4px] border-[1.5px] border-[#5E4B8B] bg-black overflow-hidden shrink-0 flex items-center justify-center">
+                        <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                    </div>
+                    <span class="font-black text-white text-[16px] sm:text-[13px] text-stroke pl-1 leading-none" style="-webkit-text-stroke: 4px #5E4B8B;">${shortName}</span>
+                </div>
+                `;
+            });
+            togglesContainer.innerHTML = togglesHtml;
 
-            // 【核心模式判断】：哪些人上转盘？
-            let wheelPlayers = [];
-            if (window.rsSyncMode === 'strict') {
-                // 生存模式：只要是活着的，全都上！绝不允许被手动排除
-                wheelPlayers = alive;
-            } else {
-                // 自由模式：活着的，且没被手动排除的，才上！
-                wheelPlayers = alive.filter(p => !window.rsExcludedPlayers.has(p.id));
-            }
+            const wheelPlayers = alive.filter(p => !window.rsExcludedPlayers.has(p.id));
             
-            if(wheelPlayers.length === 0) {
-                wheel.style.background = 'conic-gradient(#e5e7eb 0 360deg)';
-                itemsContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center font-black text-gray-400 text-lg">暂无可用玩家</div>';
-                return;
-            }
+if(wheelPlayers.length === 0) {
+                    wheel.style.backgroundImage = 'conic-gradient(from 0deg, #e5e7eb 0deg, #e5e7eb 360deg)';
+                    itemsContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center font-black text-gray-400 text-lg">全员离线</div>';
+                    return;
+                }
 
             let N = wheelPlayers.length;
             let anglePerPlayer = 360 / N;
@@ -4180,33 +4206,38 @@ window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
 
             let translateY = window.innerWidth < 640 ? 110 : 130;
 
-            wheelPlayers.forEach((p, i) => {
-                let startAng = i * anglePerPlayer;
-                let endAng = (i + 1) * anglePerPlayer;
-                
-                if(window.rsLineThickness > 0 && N > 1) {
-                    gradientStops.push(`${p.color} ${startAng}deg ${endAng - window.rsLineThickness}deg`);
-                    gradientStops.push(`${window.rsLineColor} ${endAng - window.rsLineThickness}deg ${endAng}deg`);
-                } else {
-                    gradientStops.push(`${p.color} ${startAng}deg ${endAng}deg`);
-                }
-                
-                let midAng = startAng + anglePerPlayer / 2;
-                let shortName = p.name ? p.name.slice(-1) : '?';
-                
-                itemsHtml += `
-                <div class="absolute top-1/2 left-1/2 flex flex-col items-center justify-center -ml-[30px] -mt-[40px] w-[60px] h-[80px]" style="transform: rotate(${midAng}deg) translateY(-${translateY}px);">
-                    <div class="w-[45px] h-[45px] sm:w-[40px] sm:h-[40px] rounded-[6px] border-[2px] border-[#5E4B8B] bg-black overflow-hidden mb-1 shadow-sm shrink-0">
-                        <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+wheelPlayers.forEach((p, i) => {
+                    let startAng = i * anglePerPlayer;
+                    let endAng = (i + 1) * anglePerPlayer;
+                    
+                    // 【核心魔法：画出带分割线的完美扇形 - 升级为100%兼容单位置渐变点】
+                    if(window.rsLineThickness > 0 && N > 1) {
+                        gradientStops.push(`${p.color} ${startAng}deg`);
+                        gradientStops.push(`${p.color} ${endAng - window.rsLineThickness}deg`);
+                        gradientStops.push(`${window.rsLineColor} ${endAng - window.rsLineThickness}deg`);
+                        gradientStops.push(`${window.rsLineColor} ${endAng}deg`);
+                    } else {
+                        gradientStops.push(`${p.color} ${startAng}deg`);
+                        gradientStops.push(`${p.color} ${endAng}deg`);
+                    }
+                    
+                    let midAng = startAng + anglePerPlayer / 2;
+                    let shortName = p.name ? p.name.slice(-1) : '?';
+                    
+                    itemsHtml += `
+                    <div class="absolute top-1/2 left-1/2 flex flex-col items-center justify-center -ml-[30px] -mt-[40px] w-[60px] h-[80px]" style="transform: rotate(${midAng}deg) translateY(-${translateY}px);">
+                        <div class="w-[45px] h-[45px] sm:w-[40px] sm:h-[40px] rounded-[6px] border-[2px] border-[#5E4B8B] bg-black overflow-hidden mb-1 shadow-sm shrink-0">
+                            <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                        </div>
+                        <span class="font-black text-white text-[25px] sm:text-[16px] tracking-widest leading-none drop-shadow-md" style="-webkit-text-stroke: 5px #5E4B8B; paint-order: stroke fill;">${shortName}</span>
                     </div>
-                    <span class="font-black text-white text-[25px] sm:text-[16px] tracking-widest leading-none drop-shadow-md" style="-webkit-text-stroke: 5px #5E4B8B; paint-order: stroke fill;">${shortName}</span>
-                </div>
-                `;
-            });
+                    `;
+                });
 
-            wheel.style.background = `conic-gradient(${gradientStops.join(', ')})`;
-            itemsContainer.innerHTML = itemsHtml;
-        };
+                // 【升级为 backgroundImage 与 explicit from 0deg 强制刷新渲染】
+                wheel.style.backgroundImage = `conic-gradient(from 0deg, ${gradientStops.join(', ')})`;
+                itemsContainer.innerHTML = itemsHtml;
+            };
 
         // [点击事件] 触发在线/离线切换
         window.toggleRSParticipant = function(id) {
@@ -4295,23 +4326,14 @@ window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
             if(typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
         }, 300);
         // ========================================================
-// ========================================================
-        // ★★★ 全新绝对时间戳引擎 - 倒计时 (解决时间拉扯BUG) ★★★
-        // ========================================================
-        let timerTargetTimestamp = null; // 倒计时结束的绝对时间点
-        let timerRemainPaused = 8 * 60;  // 暂停时记录剩余的秒数
-
-        // 获取倒计时真实剩余秒数
-        function getTimerCurrentRemain() {
-            if (!isTimerRunning) return timerRemainPaused;
-            let remain = Math.ceil((timerTargetTimestamp - Date.now()) / 1000);
-            return remain < 0 ? 0 : remain;
-        }
-
         // 【新增函数】生成 Web Audio 蜂鸣声
         function playBeep(vol, freq, duration) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             osc.type = 'sine';
@@ -4326,15 +4348,31 @@ window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
 
         // 【新增函数】管理滴滴声的频率与音量
         function loopSound() {
-            if (!isTimerRunning || window.timerRemain <= 0) return;
+            if (!isTimerRunning || timerRemain <= 0) return;
+// 【副机静音魔法】如果是副机或观众，直接静音，不播放过程滴滴声！
             if ((typeof isAudienceMode !== 'undefined' && isAudienceMode) || (typeof myRole !== 'undefined' && myRole === 'client')) return;
 
-            let interval = 1000; let vol = 0.1; let freq = 600;
+            let interval = 1000;
+            let vol = 0.1;
+            let freq = 600;
 
-            if (window.timerRemain <= 10) { interval = 250; vol = 1.0; freq = 1000; }
-            else if (window.timerRemain <= 30) { interval = 500; vol = 0.6; freq = 800; }
-            else if (window.timerRemain <= 60) { interval = 1000; vol = 0.3; freq = 600; }
-            else { interval = 2000; vol = 0.05; freq = 400; }
+            if (timerRemain <= 10) {
+                interval = 250; // 每秒4次 (狂暴)
+                vol = 1.0;
+                freq = 1000;
+            } else if (timerRemain <= 30) {
+                interval = 500; // 每秒2次 (紧凑)
+                vol = 0.6;
+                freq = 800;
+            } else if (timerRemain <= 60) {
+                interval = 1000; // 每秒1次 (中等)
+                vol = 0.3;
+                freq = 600;
+            } else {
+                interval = 2000; // 每两秒1次 (微弱)
+                vol = 0.05;
+                freq = 400;
+            }
 
             playBeep(vol, freq, 0.1);
             timerSoundTimeout = setTimeout(loopSound, interval);
@@ -4342,99 +4380,80 @@ window.rsSyncMode = 'strict'; // 'free' 自由模式, 'strict' 生存模式
 
         // 【新增函数】更新进度条及时间显示
         function updateTimerUI() {
-            window.timerRemain = getTimerCurrentRemain(); // 同步给旧变量防报错
-            const m = String(Math.floor(window.timerRemain / 60)).padStart(2, '0');
-            const s = String(window.timerRemain % 60).padStart(2, '0');
-            const txt = document.getElementById('timerText');
-            if(txt) txt.textContent = `${m}:${s}`;
+            const m = String(Math.floor(timerRemain / 60)).padStart(2, '0');
+            const s = String(timerRemain % 60).padStart(2, '0');
+            document.getElementById('timerText').textContent = `${m}:${s}`;
             
-            let pct = timerTotal > 0 ? (window.timerRemain / timerTotal) * 100 : 0;
-            if (pct < 0) pct = 0; if (pct > 100) pct = 100;
-            const bar = document.getElementById('timerBar');
-            if(bar) {
-                bar.style.width = `${pct}%`;
-                const hue = Math.max(0, (window.timerRemain / timerTotal) * 120);
-                bar.style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
-            }
+            let pct = timerTotal > 0 ? (timerRemain / timerTotal) * 100 : 0;
+            if (pct < 0) pct = 0;
+            if (pct > 100) pct = 100;
+            document.getElementById('timerBar').style.width = `${pct}%`;
+            
+            // Hue 渐变色：从绿色 (120) 渐变到红色 (0)
+            const hue = Math.max(0, (timerRemain / timerTotal) * 120);
+            document.getElementById('timerBar').style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
         }
 
         // 【新增函数】启动计时器
-        function startTimer() {
-            if (isTimerRunning || getTimerCurrentRemain() <= 0) return;
+function startTimer() {
+            if (isTimerRunning || timerRemain <= 0) return;
+            if (myRole === 'client') return; // 【拒绝拉扯】如果是玩家或观众，拒绝本地自主跑秒，全程听主机指挥
             isTimerRunning = true;
-            timerTargetTimestamp = Date.now() + (timerRemainPaused * 1000); // 算出倒计时会在未来几点几分几秒结束
-            
             const toggleBtn = document.getElementById('timerToggleBtn');
-            if(toggleBtn) {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                toggleBtn.classList.replace('bg-[#4ADE80]', 'bg-[#F59E0B]'); 
+            toggleBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            toggleBtn.classList.replace('bg-[#4ADE80]', 'bg-[#F59E0B]'); 
+            
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 
-            if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                updateTimerUI();
-                if (window.timerRemain <= 0) {
+timerInterval = setInterval(() => {
+                timerRemain--;
+                localStorage.setItem('unoTimerRemain', timerRemain); // 实时固化保存秒数
+                if (timerRemain <= 0) {
+                    timerRemain = 0;
                     stopTimer();
+                    // 【副机静音魔法】只有单机或主机才能播放时间到的长音！
                     if (!((typeof isAudienceMode !== 'undefined' && isAudienceMode) || (typeof myRole !== 'undefined' && myRole === 'client'))) {
-                        playBeep(1.0, 1200, 1.5); 
+                        playBeep(1.0, 1200, 1.5); // 时间到长音报警
                     }
+
+                    // 【新增】时间归零自动弹出选赢家（只显示未淘汰玩家）
                     const active = gameData.players.filter(p => p.isActive);
                     const alive = active.filter(p => !v2State.eliminated[p.id]);
-                    if (alive.length >= 2 && !v2State.winnerId && typeof window.openSelectPlayerDialog === 'function') {
-                        window.openSelectPlayerDialog('win_select');
+                    if (alive.length >= 2 && !v2State.winnerId) {
+                        // 呼叫最新的终极版选择赢家弹窗 UI
+                        if (typeof window.openSelectPlayerDialog === 'function') {
+                            window.openSelectPlayerDialog('win_select');
+                        }
                     }
                 }
-            }, 200);
+                updateTimerUI();
+                // 【新增】倒计时每一次心跳跳动，都同步广播给全场
+                if (myRole === 'host' && typeof window.broadcastTimeSync === 'function') {
+                    window.broadcastTimeSync();
+                }
+            }, 1000);
 
-            loopSound(); 
-            if(typeof broadcastTimerState === 'function') broadcastTimerState();
+            loopSound(); // 启动声音循环
         }
 
-// 【修复函数】暂停计时器
+        // 【新增函数】暂停计时器
         function stopTimer() {
-            if(!isTimerRunning) return;
-            timerRemainPaused = getTimerCurrentRemain(); // ★ 必须先计算并保存真实剩余时间！
-            isTimerRunning = false; // ★ 然后再关闭运行状态！
+            isTimerRunning = false;
             clearInterval(timerInterval);
             clearTimeout(timerSoundTimeout);
-            
             const toggleBtn = document.getElementById('timerToggleBtn');
-            if(toggleBtn) {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
-                toggleBtn.classList.replace('bg-[#F59E0B]', 'bg-[#4ADE80]');
-            }
-            updateTimerUI();
-            if(typeof broadcastTimerState === 'function') broadcastTimerState();
+            toggleBtn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
+            toggleBtn.classList.replace('bg-[#F59E0B]', 'bg-[#4ADE80]');
         }
 
         // 【新增函数】复位计时器
         function resetTimer() {
-            isTimerRunning = false;
-            clearInterval(timerInterval);
-            clearTimeout(timerSoundTimeout);
-            timerRemainPaused = timerTotal;
-            window.timerRemain = timerTotal;
-            timerTargetTimestamp = null;
+            stopTimer();
+            timerRemain = timerTotal;
             updateTimerUI();
-            if(typeof broadcastTimerState === 'function') broadcastTimerState();
         }
-
-        // 发送绝对时间广播
-        window.broadcastTimerState = function() {
-            if (myRole === 'host' && mqttClient) {
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
-                    action: 'SYNC_ABSOLUTE_TIMERS',
-                    trIsRunning: trIsRunning,
-                    trAccumulatedMs: trAccumulatedMs,
-                    trStartTimestamp: trStartTimestamp,
-                    isTimerRunning: isTimerRunning,
-                    timerTotal: timerTotal,
-                    timerRemainPaused: timerRemainPaused,
-                    timerTargetTimestamp: timerTargetTimestamp
-                }));
-            }
-        };
 
         function initModuleToggles() {
             let hiddenModules = JSON.parse(localStorage.getItem('unoHiddenModules') || '[]');
@@ -8016,20 +8035,14 @@ function renderChart() {
         }
 
 function saveData() {
-            // 【时间戳对比引擎】每次数据修改，烙印下最新的精确毫秒级时间戳
-            gameData.lastUpdated = Date.now();
             localStorage.setItem('unoInfinityPro', JSON.stringify(gameData));
+            // 【持久化保存】当前进行中的淘汰名单、倒计时、秒表状态，防刷新防关闭
+            localStorage.setItem('unoV2State', JSON.stringify(v2State));
+            localStorage.setItem('unoTimerRemain', timerRemain);
+            localStorage.setItem('unoTrElapsedSeconds', trElapsedSeconds);
+            localStorage.setItem('unoIsTimerRunning', isTimerRunning);
+            localStorage.setItem('unoTrIsRunning', trIsRunning);
             updateUndoRedoButtons();
-
-            // 如果已经连接上网络，自动把最新的数据打包分享给其他所有设备
-            if (mqttClient && myRole === 'peer') {
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
-                    action: 'SYNC_PEER_DATA',
-                    gameData: gameData,
-                    v2State: v2State,
-                    senderId: window.myClientId
-                }));
-            }
         }
         
 function updateUndoRedoButtons() {
@@ -8322,7 +8335,7 @@ function updateUndoRedoButtons() {
             els.excelFile.onchange = importExcel;
             els.closeImportResultBtn.onclick = () => els.importResultDialog.classList.add('hidden');
             
-// 【倒计时功能事件绑定 (绝对时间版)】
+            // 【新增】倒计时功能事件绑定
             const timerSetBtn = document.getElementById('timerSetBtn');
             const timerSetMin = document.getElementById('timerSetMin');
             const timerSubBtn = document.getElementById('timerSubBtn');
@@ -8330,81 +8343,43 @@ function updateUndoRedoButtons() {
             const timerToggleBtn = document.getElementById('timerToggleBtn');
             const timerResetBtn = document.getElementById('timerResetBtn');
 
-            if(timerSetBtn) {
-                timerSetBtn.onclick = () => {
-                    let val = parseInt(timerSetMin.value);
-                    if (!isNaN(val) && val > 0) {
-                        timerTotal = val * 60;
-                        timerRemainPaused = timerTotal;
-                        if(typeof stopTimer === 'function') stopTimer(); 
-                        if(typeof updateTimerUI === 'function') updateTimerUI();
-                        timerSetMin.value = '';
-                    }
-                };
-            }
+            timerSetBtn.onclick = () => {
+                let val = parseInt(timerSetMin.value);
+                if (!isNaN(val) && val > 0) {
+                    timerTotal = val * 60;
+                    timerRemain = timerTotal;
+                    stopTimer();
+                    updateTimerUI();
+                    timerSetMin.value = '';
+                }
+            };
 
-            if(timerSubBtn) {
-                timerSubBtn.onclick = () => {
-                    if (isTimerRunning) {
-                        timerTargetTimestamp -= 30000; // 前进30秒：目标时间提前30秒
-                    } else {
-                        timerRemainPaused -= 30;
-                        if (timerRemainPaused < 0) timerRemainPaused = 0;
-                    }
-                    if(typeof updateTimerUI === 'function') updateTimerUI();
-                    if(typeof broadcastTimerState === 'function') broadcastTimerState();
-                };
-            }
+            timerSubBtn.onclick = () => {
+                timerRemain -= 30;
+                if (timerRemain < 0) timerRemain = 0;
+                updateTimerUI();
+            };
 
-            if(timerAddBtn) {
-                timerAddBtn.onclick = () => {
-                    if (isTimerRunning) {
-                        timerTargetTimestamp += 30000; // 增加30秒：目标时间推后30秒
-                        if ((timerTargetTimestamp - Date.now())/1000 > timerTotal) {
-                            timerTargetTimestamp = Date.now() + timerTotal * 1000; // 防超上限
-                        }
-                    } else {
-                        timerRemainPaused += 30;
-                        if (timerRemainPaused > timerTotal) timerRemainPaused = timerTotal;
-                    }
-                    if(typeof updateTimerUI === 'function') updateTimerUI();
-                    if(typeof broadcastTimerState === 'function') broadcastTimerState();
-                };
-            }
+            timerAddBtn.onclick = () => {
+                timerRemain += 30;
+                if (timerRemain > timerTotal) timerTotal = timerRemain;
+                updateTimerUI();
+            };
 
-            if(timerToggleBtn) {
-                timerToggleBtn.onclick = () => {
-                    if (isTimerRunning) {
-                        if(typeof stopTimer === 'function') stopTimer();
-                    } else {
-                        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                        if(typeof startTimer === 'function') startTimer();
+            timerToggleBtn.onclick = () => {
+                if (isTimerRunning) {
+                    stopTimer();
+                } else {
+                    if (!audioCtx) {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     }
-                };
-            }
+                    startTimer();
+                }
+            };
 
-            if(timerResetBtn) {
-                timerResetBtn.onclick = () => {
-                    els.confirmMsg.innerText = "确定要清空并重置倒计时吗？";
-                    els.confirmDialog.classList.remove('hidden');
-                    
-                    const oldConfirm = els.confirmBtn.onclick;
-                    const oldCancel = els.cancelBtn.onclick;
-                    
-                    els.confirmBtn.onclick = () => { 
-                        if(typeof resetTimer === 'function') resetTimer(); 
-                        els.confirmDialog.classList.add('hidden');
-                        els.confirmBtn.onclick = oldConfirm;
-                        els.cancelBtn.onclick = oldCancel;
-                    };
-                    
-                    els.cancelBtn.onclick = () => { 
-                        els.confirmDialog.classList.add('hidden');
-                        els.confirmBtn.onclick = oldConfirm;
-                        els.cancelBtn.onclick = oldCancel;
-                    };
-                };
-            }
+            timerResetBtn.onclick = () => {
+                resetTimer();
+            };
 
             // 场次记录事件绑定
             document.getElementById('addSessionBtn').onclick = () => {
@@ -9422,7 +9397,15 @@ const mobileTabs = {
         'tab10': { name: '卡牌信息', color: '#E0E7FF', modules:['cardInfoSection'] }  // 原来的卡牌顺延
     };
 
-
+// 【观众模式判断】：观众端隐藏 实时结算、数据备份、卡牌信息
+    if (typeof isAudienceMode !== 'undefined' && isAudienceMode) {
+        const t7 = document.querySelector('.mobile-tab-btn[data-tab="tab7"]');
+        const t8 = document.querySelector('.mobile-tab-btn[data-tab="tab8"]');
+        const t10 = document.querySelector('.mobile-tab-btn[data-tab="tab10"]'); // 抓取卡牌信息模块
+        if(t7) t7.style.setProperty('display', 'none', 'important');
+        if(t8) t8.style.setProperty('display', 'none', 'important');
+        if(t10) t10.style.setProperty('display', 'none', 'important'); // 强制隐藏
+    }
 
     let currentMobileTab = 'tab3';
 
@@ -13097,8 +13080,9 @@ if(btnSelRevive && btnSelUndo && btnConfirmUI) {
         // ★★★ 第三步：MQTT 毫秒级通讯引擎与联机大厅控制器 ★★★
         // ====================================================================
         
+const FIXED_ROOM_CODE = '888888'; // ★ 自定义固定唯一房间号 ★
         let mqttClient = null; // 对讲机本体
-        let roomCode = '';     // 6位数房间号
+        let roomCode = FIXED_ROOM_CODE; // 默认读取固定房间号
         let myRole = 'single'; // 身份：'single'(单机), 'host'(主机), 'client'(副机)
         let mySeatId = null;   // 副机专属座位号
 // 【新增】：全局房间号 UI 刷新引擎
@@ -13133,79 +13117,198 @@ if(btnSelRevive && btnSelUndo && btnConfirmUI) {
             setTimeout(() => document.getElementById('networkLobby').classList.add('hidden'), 500);
         };
 
-const FIXED_ROOM_CODE = "UNO_VIP_8888"; // 房间号
-        
-        // 【全新P2P对等模式加入游戏】
-        window.nlStartPeer = function() {
-            document.getElementById('nlMainMenu').classList.add('hidden');
-            document.getElementById('nlConnectingMenu').classList.remove('hidden');
-            document.getElementById('nlConnectingMenu').classList.add('flex');
-            document.getElementById('nlConnectingText').textContent = "正在进入大厅并同步最新数据...";
+// 1. 点击【单机模式】
+        window.nlStartSingle = function() {
+            // 【新增：密码锁验证】
+            let pwd = prompt("【安全锁验证】\n请输入管理员密码以进入单机模式：");
+            if (pwd !== "TW19931995") {
+                alert("❌ 密码错误，访问被拒绝！");
+                return;
+            }
+            
+            myRole = 'single';
+            window.nlHideLobby();
+        };
 
+        // 2. 主机：点击【创建房间】
+        window.nlShowCreateRoom = function() {
+            // 【新增：密码锁验证】
+            let pwd = prompt("【安全锁验证】\n请输入管理员密码以获取创建房间权限：");
+            if (pwd !== "TW19931995") {
+                alert("❌ 密码错误，访问被拒绝！");
+                return;
+            }
+
+            document.getElementById('nlMainMenu').classList.add('hidden');
+            document.getElementById('nlCreateMenu').classList.remove('hidden');
+            document.getElementById('nlCreateMenu').classList.add('flex');
+
+            // 魔法：生成 6 位随机房间号
+            roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // 魔法：连接免费的 EMQX 顶级公共节点 (WSS加密防拦截)
+            mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+
+            // 连接成功后
+            mqttClient.on('connect', () => {
+                console.log('👑 主机已连接对讲机频道！房间号:', roomCode);
+                // 监听专属的 6 位数频道
+                mqttClient.subscribe(`uno_room_${roomCode}`);
+                
+                // 切换到显示房间号的界面
+                document.getElementById('nlCreateMenu').classList.add('hidden');
+                document.getElementById('nlCreateMenu').classList.remove('flex');
+                document.getElementById('nlHostRoomMenu').classList.remove('hidden');
+                document.getElementById('nlHostRoomMenu').classList.add('flex');
+                document.getElementById('nlHostRoomCode').textContent = roomCode;
+                myRole = 'host';
+            });
+
+            // 挂载对讲机听筒（收到消息时触发）
+            mqttClient.on('message', window.handleMqttMessage);
+        };
+
+        // 3. 主机：点击【进入游戏】
+        window.nlEnterGameAsHost = function() {
+window.nlHideLobby();
+            if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode(); // 唤醒房间号显示
+            alert("👑 您已作为【裁判/主机】进入游戏！\n全场所有数据以您的手机为准，请等待玩家加入。");
+        };
+
+        // 4. 副机：点击【加入房间】
+        window.nlShowJoinRoom = function() {
+            document.getElementById('nlMainMenu').classList.add('hidden');
+            document.getElementById('nlJoinMenu').classList.remove('hidden');
+            document.getElementById('nlJoinMenu').classList.add('flex');
+        };
+
+        // 副机：返回主菜单
+        window.nlBackToMain = function() {
+            document.getElementById('nlJoinMenu').classList.add('hidden');
+            document.getElementById('nlJoinMenu').classList.remove('flex');
+            document.getElementById('nlMainMenu').classList.remove('hidden');
+        };
+
+// 【自动连接对讲机】加载网页时，自动秒连固定唯一的房间频道，省去输入和创建过程
+        window.nlAutoConnect = function() {
             roomCode = FIXED_ROOM_CODE;
+            console.log('⚡ 正在背景自动连接对讲机固定房间:', roomCode);
             mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
             mqttClient.on('connect', () => {
+                console.log('📶 对讲机已连接！进入身份决策阶段。房间号:', roomCode);
                 mqttClient.subscribe(`uno_room_${roomCode}`);
-                myRole = 'peer'; // 设定身份为对等节点，所有人平权
-                isAudienceMode = false; // 所有人均可修改和计算数据
-
-                // 主动在大厅高喊：有谁在线吗？把最新数据丢给我一份！
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ 
-                    action: 'REQ_PEER_LATEST', 
-                    senderId: window.myClientId 
-                }));
-
-                // 等待 1 秒同步时间，然后无缝进入游戏主页
-                setTimeout(() => {
-                    window.nlHideLobby();
-                    if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
-                }, 1000);
             });
 
             mqttClient.on('message', window.handleMqttMessage);
         };
 
-// 6. 核心通讯中枢：处理对讲机里收到的所有广播（对等网络全自动同步引擎）
+        // 统一身份选择中枢，彻底消除繁琐输入
+        window.nlSelectIdentity = function(role) {
+            if (role === 'host') {
+                let pwd = prompt("【安全锁验证】\n请输入管理员密码以获取裁判/主机权限：");
+                if (pwd !== "TW19931995") {
+                    alert("❌ 密码错误，访问被拒绝！");
+                    return;
+                }
+                myRole = 'host';
+                // 主机连接上后，立刻拉取一次全量数据同步（防止刷新后不同步），并向其他客户端广播自己为主机
+                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                window.nlHideLobby();
+                if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
+                alert("👑 您已作为【裁判/主机】进入游戏！\n全场所有数据和计时以您为准。");
+            } 
+            else if (role === 'client') {
+                myRole = 'client';
+                isAudienceMode = false;
+                
+                // 显示选座界面并隐藏大厅主菜单
+                document.getElementById('nlMainMenu').classList.add('hidden');
+                document.getElementById('nlSeatMenu').classList.remove('hidden');
+                document.getElementById('nlSeatMenu').classList.add('flex');
+                
+                // 向主机索取最新的所有数据和正在进行的局数、倒计时进度
+                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+            } 
+            else if (role === 'spectator') {
+                myRole = 'client'; 
+                isAudienceMode = true;
+                window.nlHideLobby();
+                initCloudUI(); // 应用只读排版
+                if(typeof window.applyClientRestrictions === 'function') window.applyClientRestrictions();
+                
+                // 索取主机正在进行的信息和倒计时
+                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                alert("📺 您已作为【观众】进入游戏！\n您可实时静默查看局数和倒计时进度。");
+            }
+        };
+
+        // 6. 核心通讯中枢：处理对讲机里收到的所有广播
         window.handleMqttMessage = function(topic, message) {
             if (topic !== `uno_room_${roomCode}`) return;
             try {
                 const payload = JSON.parse(message.toString());
 
-                // 【P2P对等场景 A】：新加入的设备在呼叫最新数据
-                if (payload.action === 'REQ_PEER_LATEST' && myRole === 'peer') {
-                    // 如果自己不是新加入的人，并且本地拥有有效的数据，立刻回复当前最新状态
-                    if (payload.senderId !== window.myClientId && gameData.rounds.length > 0) {
-                        mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
-                            action: 'SYNC_PEER_DATA',
-                            gameData: gameData,
-                            v2State: v2State,
-                            senderId: window.myClientId
-                        }));
-                    }
+// 【情景 A】主机听到了副机的求救：把当前所有真实数据打包砸过去！
+                if (payload.action === 'REQ_FULL_SYNC' && myRole === 'host') {
+                    const syncData = {
+                        action: 'FULL_SYNC_DATA',
+                        gameData: gameData,
+                        v2State: v2State,
+                        // 连带把主机的计时器状态、秒表状态全部发过去进行强绑定
+                        timerRemain: typeof timerRemain !== 'undefined' ? timerRemain : 0,
+                        isTimerRunning: typeof isTimerRunning !== 'undefined' ? isTimerRunning : false,
+                        trElapsedSeconds: typeof trElapsedSeconds !== 'undefined' ? trElapsedSeconds : 0,
+                        trIsRunning: typeof trIsRunning !== 'undefined' ? trIsRunning : false
+                    };
+                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify(syncData));
                 }
 
-                // 【P2P对等场景 B】：接收其他设备同步过来的数据
-                if (payload.action === 'SYNC_PEER_DATA' && myRole === 'peer') {
-                    // 仅当：数据不是自己发的，且接收到的时间戳比本地的数据“更新”时，才进行覆盖
-                    const incomingTime = payload.gameData.lastUpdated || 0;
-                    const ourTime = gameData.lastUpdated || 0;
+// 【情景 B】副机接住了主机砸过来的全量数据！
+                if (payload.action === 'FULL_SYNC_DATA' && myRole === 'client') {
+                    // 1. 覆盖本地数据
+                    gameData = payload.gameData;
+                    if(payload.v2State) v2State = payload.v2State;
+                    
+                    // 【时空穿梭对齐】自动拉取并装载主机当前正在进行的局数和倒计时进度
+                    if (payload.timerRemain !== undefined) timerRemain = payload.timerRemain;
+                    if (payload.isTimerRunning !== undefined) isTimerRunning = payload.isTimerRunning;
+                    if (payload.trElapsedSeconds !== undefined) trElapsedSeconds = payload.trElapsedSeconds;
+                    if (payload.trIsRunning !== undefined) trIsRunning = payload.trIsRunning;
 
-                    if (payload.senderId !== window.myClientId && incomingTime > ourTime) {
-                        gameData = payload.gameData;
-                        if(payload.v2State) v2State = payload.v2State;
-                        
-                        // 保存覆盖本地缓存
-                        localStorage.setItem('unoInfinityPro', JSON.stringify(gameData));
+                    saveData(); // 存入本地缓存
+                    if (typeof updateTimerUI === 'function') updateTimerUI();
+                    if (typeof updateTrDisplay === 'function') updateTrDisplay();
 
-                        // 强力重绘刷新大厅界面
-                        gameData.currentSessionIndex = -1;
+                    // 【Bug修复核心】：判断当前是否已经选座
+                    if (mySeatId === null) {
+                        // 如果还没入座，说明是刚加入房间：显示【选座界面】
+                        document.getElementById('nlJoinMenu').classList.add('hidden');
+                        document.getElementById('nlJoinMenu').classList.remove('flex');
+                        document.getElementById('nlSeatMenu').classList.remove('hidden');
+                        document.getElementById('nlSeatMenu').classList.add('flex');
+
+                        // 3. 用收到的数据，画出全场玩家头像供副机选择
+                        const seatGrid = document.getElementById('nlSeatGrid');
+                        seatGrid.innerHTML = gameData.players.filter(p => p.isActive).map(p => `
+                            <div onclick="window.nlSelectSeat(${p.id})" class="flex flex-col items-center border-[3px] border-[#5E4B8B] rounded-xl py-2 shadow-sm cursor-pointer active:scale-95 transition-transform bg-white">
+                                <div class="w-10 h-10 rounded-[6px] border-[2px] border-[#5E4B8B] bg-black overflow-hidden mb-1">
+                                    <img src="${p.avatar}" class="w-full h-full object-cover">
+                                </div>
+                                <span class="font-black text-[15px]" style="color: ${p.color}; -webkit-text-stroke: 0.5px #5E4B8B; paint-order: stroke fill;">${p.name.slice(-1)}</span>
+                            </div>
+                        `).join('');
+                    } else {
+                        // 【如果已经在座位上（游戏中）】：收到新数据立刻全屏疯狂刷新！！！
+                        gameData.currentSessionIndex = -1; // 强制回到全局视角
                         if(typeof updateViewRounds === 'function') updateViewRounds();
                         if(typeof recalculateStats === 'function') recalculateStats();
                         if(typeof updateAllUI === 'function') updateAllUI();
                         if(typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
                     }
                 }
+                
+                // --- 下方预留空位：下一步处理战斗中的增量同步操作 ---
 
             } catch(e) {
                 console.error("MQTT 消息解析失败:", e);
@@ -13688,18 +13791,15 @@ window.nlHideLobby();
         // ====================================================================
 
         // 魔法 1：副机权限封印术
-        window.applyClientRestrictions = function() {
+window.applyClientRestrictions = function() {
             if (myRole !== 'client') return;
 
-// 【全新逻辑】不隐藏时间显示框，只隐藏他们内部的操作按钮！
-            ['trToggleBtn', 'trResetBtn', 'timerSubBtn', 'timerAddBtn', 'timerToggleBtn', 'timerResetBtn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.style.display = 'none';
-            });
-            
-            // 为了美观，把底部的空隙去掉
-            const cdBox = document.getElementById('timerBar')?.parentElement;
-            if (cdBox) cdBox.style.marginBottom = '0';
+            // 【优化】观众端/副机端只隐藏控制按钮，保留时间屏幕和倒计时展示
+            const stopwatchBtns = document.getElementById('stopwatchButtonsWrapper');
+            if (stopwatchBtns) stopwatchBtns.style.display = 'none';
+
+            const timerBtns = document.getElementById('timerButtonsWrapper');
+            if (timerBtns) timerBtns.style.display = 'none';
 
             const v2Undo = document.getElementById('v2UndoBtn')?.parentElement;
             if (v2Undo) v2Undo.style.display = 'none';
@@ -13725,7 +13825,7 @@ const earlyBtn = document.getElementById('earlyWinBtn');
         };
 
 // 魔法 2：主机状态全场广播器 (升级版：附带全场分数兜底！)
-        window.broadcastV2State = function() {
+window.broadcastV2State = function() {
             if (myRole !== 'host' || !mqttClient) return;
             
             // 将屏幕上所有人的最新分数一网打尽
@@ -13738,6 +13838,18 @@ const earlyBtn = document.getElementById('earlyWinBtn');
                 action: 'SYNC_V2_STATE',
                 v2State: v2State,
                 scores: currentScores // 附加上全场绝对的分数快照
+            }));
+        };
+
+        // 【新增时间同步广播】主机专用，向全场毫秒级同步当前的倒计时和秒表进度
+        window.broadcastTimeSync = function() {
+            if (myRole !== 'host' || !mqttClient) return;
+            mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
+                action: 'TIME_SYNC',
+                timerRemain: timerRemain,
+                isTimerRunning: isTimerRunning,
+                trElapsedSeconds: trElapsedSeconds,
+                trIsRunning: trIsRunning
             }));
         };
 
@@ -13790,9 +13902,14 @@ const earlyBtn = document.getElementById('earlyWinBtn');
                         if (input) input.value = payload.scoreVal;
                     }
 
-                    if (payload.eliminatedStr) {
+if (payload.eliminatedStr) {
                         v2State.eliminated[pid] = payload.eliminatedStr;
-                        v2State.eliminationDetails[pid] = payload.detailsObj;
+                        // 【强制主机时间确权】淘汰时的时间戳完全由主机权威时钟决定，彻底根除客户端延迟导致的拉扯
+                        v2State.eliminationDetails[pid] = {
+                            killerId: payload.detailsObj ? payload.detailsObj.killerId : null,
+                            cards: payload.detailsObj ? payload.detailsObj.cards : 0,
+                            time: trElapsedSeconds // 主机本地精确秒数
+                        };
                         if (wasAlive) {
                             v2State.eliminationEvents.push([pid]);
                             if (v2State.eliminationEvents.length === 1) {
@@ -13853,10 +13970,20 @@ const earlyBtn = document.getElementById('earlyWinBtn');
                     dialogBox.classList.remove('hidden');
                 }
 
-                // 【新增】：副机接收主机取消或确认完毕后，隐藏弹窗
+// 【新增】：副机接收主机取消或确认完毕后，隐藏弹窗
                 if (payload.action === 'HIDE_CALC_CONFIRM' && myRole === 'client') {
                     const dialogBox = document.getElementById('v2DialogFinalCalcConfirm');
                     if (dialogBox) dialogBox.classList.add('hidden');
+                }
+
+                // 【情景 D：时间实时静默对齐】副机完全信奉主机的时钟，拒绝时间回弹和拉扯
+                if (payload.action === 'TIME_SYNC' && myRole === 'client') {
+                    timerRemain = payload.timerRemain;
+                    isTimerRunning = payload.isTimerRunning;
+                    trElapsedSeconds = payload.trElapsedSeconds;
+                    trIsRunning = payload.trIsRunning;
+                    if (typeof updateTimerUI === 'function') updateTimerUI();
+                    if (typeof updateTrDisplay === 'function') updateTrDisplay();
                 }
 
             } catch (e) {}
@@ -13885,7 +14012,20 @@ const earlyBtn = document.getElementById('earlyWinBtn');
             }
         });
 
-
+        // 拦截 2：副机误触别人胶囊
+        document.addEventListener('click', (e) => {
+            if (myRole === 'client') {
+                const cap = e.target.closest('.v2-player-cap');
+                if (cap) {
+                    const pid = parseInt(cap.dataset.id);
+                    if (pid !== mySeatId) {
+                        alert('📱 警告：作为副机，您只能操作【自己】的玩家位喔！');
+                        e.stopPropagation(); 
+                        return;
+                    }
+                }
+            }
+        }, true);
 
         // 拦截 3：★终极修复★ 监听 V2 所有弹窗的确认按钮，提取最终状态发给主机！
         document.body.addEventListener('click', (e) => {
@@ -13914,9 +14054,10 @@ const earlyBtn = document.getElementById('earlyWinBtn');
             }
         });
 
-        const origRenderV2ScoreArea = window.renderV2ScoreArea;
+const origRenderV2ScoreArea = window.renderV2ScoreArea;
         window.renderV2ScoreArea = function() {
             if (origRenderV2ScoreArea) origRenderV2ScoreArea();
+            if (typeof window.renderRandomSelector === 'function') window.renderRandomSelector(); // 【新增】让大转盘跟生存状态实时同步
             if (myRole === 'host') window.broadcastV2State();
             if (myRole === 'client') {
                 document.querySelectorAll('.v2-score-input').forEach(input => {
@@ -13933,27 +14074,6 @@ const earlyBtn = document.getElementById('earlyWinBtn');
                 }, 500); 
             }
         });
-// ========================================================
-        // ★★★ 核心修复：随机抽选转盘与淘汰状态 100% 实时同步挂载 ★★★
-        // ========================================================
-        if (!window.rsV2ScoreAreaHooked) {
-            const origRenderV2ScoreAreaHook = window.renderV2ScoreArea;
-            // 劫持 renderV2ScoreArea (因为只要淘汰状态变了，这个函数绝对会被触发)
-            window.renderV2ScoreArea = function() {
-                if (origRenderV2ScoreAreaHook) origRenderV2ScoreAreaHook();
-                if (typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
-            };
-            window.rsV2ScoreAreaHooked = true;
-        }
-        
-        // 保险机制：在页面加载后，强制让按钮文字和颜色匹配默认的生存模式
-        setTimeout(() => {
-            const rsBtn = document.getElementById('rsModeToggleBtn');
-            if(rsBtn && window.rsSyncMode === 'strict') {
-                rsBtn.textContent = '当前：生存模式';
-                rsBtn.classList.replace('bg-[#9333EA]', 'bg-[#E11D48]');
-            }
-        }, 600);
 </script>
 </body>
 </html>
