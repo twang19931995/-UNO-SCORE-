@@ -13119,26 +13119,12 @@ const FIXED_ROOM_CODE = '888888'; // ★ 自定义固定唯一房间号 ★
 
 // 1. 点击【单机模式】
         window.nlStartSingle = function() {
-            // 【新增：密码锁验证】
-            let pwd = prompt("【安全锁验证】\n请输入管理员密码以进入单机模式：");
-            if (pwd !== "TW19931995") {
-                alert("❌ 密码错误，访问被拒绝！");
-                return;
-            }
-            
             myRole = 'single';
             window.nlHideLobby();
         };
 
-        // 2. 主机：点击【创建房间】
+// 2. 主机：点击【创建房间】
         window.nlShowCreateRoom = function() {
-            // 【新增：密码锁验证】
-            let pwd = prompt("【安全锁验证】\n请输入管理员密码以获取创建房间权限：");
-            if (pwd !== "TW19931995") {
-                alert("❌ 密码错误，访问被拒绝！");
-                return;
-            }
-
             document.getElementById('nlMainMenu').classList.add('hidden');
             document.getElementById('nlCreateMenu').classList.remove('hidden');
             document.getElementById('nlCreateMenu').classList.add('flex');
@@ -13203,14 +13189,9 @@ window.nlHideLobby();
             mqttClient.on('message', window.handleMqttMessage);
         };
 
-        // 统一身份选择中枢，彻底消除繁琐输入
+// 统一身份选择中枢，彻底消除繁琐输入
         window.nlSelectIdentity = function(role) {
             if (role === 'host') {
-                let pwd = prompt("【安全锁验证】\n请输入管理员密码以获取裁判/主机权限：");
-                if (pwd !== "TW19931995") {
-                    alert("❌ 密码错误，访问被拒绝！");
-                    return;
-                }
                 myRole = 'host';
                 // 主机连接上后，立刻拉取一次全量数据同步（防止刷新后不同步），并向其他客户端广播自己为主机
                 mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
