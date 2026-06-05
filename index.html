@@ -1489,6 +1489,30 @@
         </section>
 
 
+<!-- ======================================= -->
+<!-- 【新增】分数走向大模块 开始 -->
+<!-- ======================================= -->
+<section id="scoreFlowSection" class="kawaii-card p-3 sm:p-5 mb-6" style="order: 0; display: none;">
+    <!-- 顶部标题胶囊 -->
+    <div class="flex justify-center mb-4 mt-2">
+        <div class="bg-[#FFD93D] border-[3px] border-[#5E4B8B] rounded-full px-8 py-1.5 shadow-[0_4px_0_#5E4B8B]">
+            <span class="font-black text-[#5E4B8B] text-lg tracking-widest leading-none">分数走向</span>
+        </div>
+    </div>
+    
+    <!-- 分割辅助线 -->
+    <div class="flex items-center justify-center gap-3 mb-4 w-full px-4">
+        <div class="h-[2px] flex-1 bg-gray-300 max-w-[80px]"></div>
+        <p class="text-[10px] sm:text-xs text-[#5E4B8B] font-black text-center tracking-widest opacity-80 shrink-0">当前区间内各玩家最终积分的净流向与贡献</p>
+        <div class="h-[2px] flex-1 bg-gray-300 max-w-[80px]"></div>
+    </div>
+    
+    <!-- 动态卡牌容器 -->
+    <div id="scoreFlowContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+        <!-- JS 动态渲染逻辑会在这里下崽子 -->
+    </div>
+</section>
+<!-- ======================================= -->
 
 <!-- ======================================= -->
 <!-- 【极致复刻】得分占比折线悬浮模块 开始 (图1) -->
@@ -2592,6 +2616,7 @@
         ];
 
 const modulesConfig =[
+{ id: 'scoreFlowSection', name: '分数走向', icon: 'fa-route' },
 { id: 'dynamicDataSection', name: '动态数据', icon: 'fa-chart-bar' },
 { id: 'cardInfoSection', name: '卡牌图鉴百科', icon: 'fa-book-open' },
 { id: 'methodDetailSection', name: '结算详情1', icon: 'fa-images' },
@@ -3862,6 +3887,7 @@ updateViewRounds(); // 【新增】启动时先分配好当前的区间数据
             renderPlayerManager();
             renderScoreInputs();
             updateAllUI();
+if(typeof window.renderScoreFlowSection === 'function') window.renderScoreFlowSection();
             bindEvents();
             updateUndoRedoButtons();
             
@@ -9411,7 +9437,7 @@ const mobileTabs = {
         'tab2': { name: '排行榜单', color: '#A3D977', modules:['championSectionWrapper', 'leaderboardSection'] },
         'tab3': { name: '奖杯荣誉', color: '#FDE047', modules:['badgeSection'] },
         'tab4': { name: '全场成就', color: '#fbbf24', modules:['achievementsSection'] },
-        'tab5': { name: '详细数据', color: '#93C5FD', modules:['timeHistorySection', 'pieChartSection', 'methodStatSection', 'methodDetailSection', 'chartSection', 'radarSection', 'oneVsOneSection', 'sessionSection', 'tableSection'] },
+'tab5': { name: '详细数据', color: '#93C5FD', modules:['timeHistorySection', 'scoreFlowSection', 'pieChartSection', 'methodStatSection', 'methodDetailSection', 'chartSection', 'radarSection', 'oneVsOneSection', 'sessionSection', 'tableSection'] },
         'tab6': { name: '随机抽选', color: '#7dd3fc', modules:['randomSelectorSection'] },
         'tab7': { name: '实时结算', color: '#d8b4e2', modules:['playerSection', 'timeRecordSection', 'timerSection', 'penaltySection', 'penaltyStatsSection'] },
         'tab8': { name: '数据备份', color: '#F472B6', modules:['cloudShareSection', 'methodManagerSection', 'dataIOSection'] },
@@ -9996,7 +10022,195 @@ const prevCardInfoRender = window.updateAllUI;
 window.updateAllUI = function() {
     if(prevCardInfoRender) prevCardInfoRender();
     if(typeof window.renderCardInfoSystem === 'function') window.renderCardInfoSystem();
+    if(typeof window.renderScoreFlowSection === 'function') window.renderScoreFlowSection();
 };
+
+// ====================================================================
+// ★ 新增：分数走向（贪心匹配无偏对账算法）核心画笔引擎 ★
+// ====================================================================
+window.renderScoreFlowSection = function() {
+    const section = document.getElementById('scoreFlowSection');
+    const container = document.getElementById('scoreFlowContainer');
+    if (!section || !container) return;
+
+    if (viewRounds.length === 0) {
+        container.innerHTML = '<div class="text-center text-[#5E4B8B] font-bold py-6 w-full col-span-2">暂无对局数据</div>';
+        return;
+    }
+
+    // 1. 计算每个玩家在当前区间内的最终累计总分
+    const totals = {};
+    gameData.players.forEach(p => {
+        totals[p.id] = viewRounds.reduce((sum, r) => sum + (r.changes[p.id] || 0), 0);
+    });
+
+    // 2. 提取出所有在当前区间内，累计积分不为 0 的实际参与者
+    const participants = gameData.players.filter(p => totals[p.id] !== 0);
+
+    if (participants.length === 0) {
+        container.innerHTML = '<div class="text-center text-[#5E4B8B] font-bold py-6 w-full col-span-2">本区间积分为0，无分数流向</div>';
+        return;
+    }
+
+    // 3. 将玩家严格划分为：净赢家（总分 > 0）与 净输家（总分 < 0）
+    const winners = [];
+    const losers = [];
+
+    participants.forEach(p => {
+        const score = totals[p.id];
+        if (score > 0) {
+            winners.push({ id: p.id, p: p, remaining: score, total: score });
+        } else if (score < 0) {
+            losers.push({ id: p.id, p: p, remaining: -score, total: -score }); // 使用绝对值
+        }
+    });
+
+    // 按分值由大到小降序排列
+    winners.sort((a, b) => b.total - a.total);
+    losers.sort((a, b) => a.total - b.total);
+
+    // 4. 施加贪心匹配（Greedy Clearing）算法：让大赢家与大输家优先对账，得到纯整数、个性化的两部图流向
+    const flowFromTo = {}; // flowFromTo[loserId][winnerId] = amount
+    losers.forEach(l => {
+        flowFromTo[l.id] = {};
+    });
+
+    let wIdx = 0;
+    let lIdx = 0;
+
+    while (wIdx < winners.length && lIdx < losers.length) {
+        const w = winners[wIdx];
+        const l = losers[lIdx];
+
+        const amt = Math.min(w.remaining, l.remaining);
+
+        flowFromTo[l.id][w.id] = amt;
+
+        w.remaining -= amt;
+        l.remaining -= amt;
+
+        if (w.remaining === 0) wIdx++;
+        if (l.remaining === 0) lIdx++;
+    }
+
+    // 5. 开始渲染卡牌，各卡片将呈现截然不同的分值占比
+    let html = '';
+    const sortedPlayers = [...participants].sort((a, b) => totals[b.id] - totals[a.id]);
+
+    sortedPlayers.forEach(p => {
+        const currentTotal = totals[p.id];
+        const absTotal = Math.abs(currentTotal);
+
+        let cardBg = hexToRgba(p.color, 0.15); // 给大白卡纸染上一层玩家代表色背景
+        let scoreText = currentTotal > 0 ? `+${currentTotal}` : `${currentTotal}`;
+        let scoreColorClass = currentTotal > 0 ? 'text-[#4ADE80]' : (currentTotal < 0 ? 'text-[#F87171]' : 'text-gray-400');
+
+        let flowItemsHtml = '';
+
+        if (currentTotal > 0) {
+            // 【赢家】：谁给他贡献了分值
+            const contributors = [];
+            losers.forEach(l => {
+                const amt = flowFromTo[l.id][p.id] || 0;
+                if (amt > 0) {
+                    contributors.push({ p: l.p, val: amt });
+                }
+            });
+
+            if (contributors.length > 0) {
+                contributors.sort((a, b) => b.val - a.val);
+                flowItemsHtml = `
+                <div class="flex flex-col gap-1.5 w-full mt-2">
+                    <div class="text-[10px] sm:text-xs font-black text-[#5E4B8B] tracking-widest text-center">分值来源 (净赢自)</div>
+                    <div class="grid grid-cols-1 gap-1.5 w-full">
+                        ${contributors.map(c => {
+                            const pct = Math.round((c.val / absTotal) * 100) + '%';
+                            return `
+                            <div class="flex items-center justify-between border-[2px] border-[#5E4B8B] bg-white rounded-lg p-1.5 h-10 shadow-sm">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-6 h-6 rounded-[4px] border-[1.5px] border-[#5E4B8B] overflow-hidden" style="background-color: ${c.p.color};">
+                                        <img src="${c.p.avatar}" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="font-black text-[#5E4B8B] text-xs sm:text-sm truncate max-w-[60px]">${c.p.name}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black text-[#EF4444] text-xs sm:text-sm">-${c.val}</span>
+                                    <span class="bg-[#FCA5A5] border-[1.5px] border-[#5E4B8B] text-white font-black text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full leading-none tracking-tighter">${pct}</span>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            } else {
+                flowItemsHtml = '<div class="text-center text-xs text-gray-400 font-bold py-4">无来源记录</div>';
+            }
+        } else if (currentTotal < 0) {
+            // 【输家】：分值输给了谁
+            const recipients = [];
+            winners.forEach(w => {
+                const amt = flowFromTo[p.id][w.id] || 0;
+                if (amt > 0) {
+                    recipients.push({ p: w.p, val: amt });
+                }
+            });
+
+            if (recipients.length > 0) {
+                recipients.sort((a, b) => b.val - a.val);
+                flowItemsHtml = `
+                <div class="flex flex-col gap-1.5 w-full mt-2">
+                    <div class="text-[10px] sm:text-xs font-black text-[#5E4B8B] tracking-widest text-center">分值去向 (净输给)</div>
+                    <div class="grid grid-cols-1 gap-1.5 w-full">
+                        ${recipients.map(r => {
+                            const pct = Math.round((r.val / absTotal) * 100) + '%';
+                            return `
+                            <div class="flex items-center justify-between border-[2px] border-[#5E4B8B] bg-white rounded-lg p-1.5 h-10 shadow-sm">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-6 h-6 rounded-[4px] border-[1.5px] border-[#5E4B8B] overflow-hidden" style="background-color: ${r.p.color};">
+                                        <img src="${r.p.avatar}" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="font-black text-[#5E4B8B] text-xs sm:text-sm truncate max-w-[60px]">${r.p.name}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black text-[#4ADE80] text-xs sm:text-sm">+${r.val}</span>
+                                    <span class="bg-[#86EFAC] border-[1.5px] border-[#5E4B8B] text-white font-black text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full leading-none tracking-tighter">${pct}</span>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            } else {
+                flowItemsHtml = '<div class="text-center text-xs text-gray-400 font-bold py-4">无去向记录</div>';
+            }
+        } else {
+            flowItemsHtml = '<div class="text-center text-xs text-gray-400 font-bold py-6">本区间积分为0，无拉扯纠葛</div>';
+        }
+
+        let shortName = p.name ? p.name.slice(-1) : '?';
+
+        html += `
+        <div class="relative w-full border-[3px] border-[#5E4B8B] rounded-[1.2rem] bg-white p-3 pt-6 shadow-[0_4px_0_#5E4B8B]" style="background-color: ${cardBg};">
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 border-[2.5px] border-[#5E4B8B] rounded-[8px] px-3.5 py-1 flex items-center gap-2 shadow-[0_3px_0_#5E4B8B] z-10" style="background-color: ${p.color};">
+                <div class="w-5 h-5 rounded-[4px] border-[1.5px] border-[#5E4B8B] bg-black overflow-hidden shrink-0">
+                    <img src="${p.avatar}" class="w-full h-full object-cover">
+                </div>
+                <span class="font-black text-white text-[13px] sm:text-[16px] tracking-widest text-stroke leading-none pb-[1px]" style="-webkit-text-stroke: 1px #5E4B8B;">${shortName}</span>
+            </div>
+            
+            <div class="flex justify-between items-center border-b-[2px] border-dashed border-[#5E4B8B]/20 pb-2 mb-2 w-full mt-1.5">
+                <span class="font-bold text-xs text-[#5E4B8B]">本区间累积总分:</span>
+                <span class="font-black text-3xl tracking-tighter text-stroke ${scoreColorClass}">${scoreText}</span>
+            </div>
+
+            <div class="w-full">
+                ${flowItemsHtml}
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+};
+
+
 // ====================================================================
 // ★★★ 动态数据可视化引擎 (极致丝滑 60/120帧 RAF 硬件加速算法) ★★★
 // ====================================================================
@@ -12852,6 +13066,7 @@ if (typeof renderTrHistoryList === 'function') renderTrHistoryList();
     window.detailModulesConfig =[
 { id: 'timeHistorySection', name: '时间相关', color: '#f8b551' },
         { id: 'chartSection', name: '走势图', color: '#7ecef4' },
+{ id: 'scoreFlowSection', name: '分数走向', color: '#FFB3D9' },
         { id: 'radarSection', name: '个人能力', color: '#e0ffc6' },
         { id: 'oneVsOneSection', name: '1V1擂台', color: '#ffb3a7' },
         { id: 'methodStatSection', name: '结算统计', color: '#a0b0c4' },
