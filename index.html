@@ -1232,6 +1232,69 @@
                 <button id="v2CalculateBtn" disabled class="flex-1 bg-gray-400 opacity-50 cursor-not-allowed border-[3px] sm:border-[4px] border-[#5E4B8B] rounded-full py-2 font-black text-xs sm:text-sm transition-all tracking-widest text-white">确认结算</button>
             </div>
 
+<!-- ================= 复制版随机选择器（100%复刻原版） ================= -->
+<section id="randomSelectorSection2" class=" p-4 sm:p-5 mb-6 " style="order: 0;">
+    <div class="flex flex-col items-center w-full relative gap-4">
+        
+        <!-- 【顶部控制区：标题与切换按钮】 -->
+        <div class="w-full flex justify-between items-center mb-2 px-1 sm:px-2 relative z-10">
+            <button id="rsSwitchUIBtn2" class="bg-[#FDE047] border-[3px] border-[#5E4B8B] rounded-full px-4 py-1.5 font-black text-[#5E4B8B] text-xs sm:text-sm shadow-[0_3px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:brightness-110" onclick="window.toggleRSUI2()">
+                切换经典版
+            </button>
+        </div>
+
+        <!-- 【经典版 轨道UI】 (默认隐藏) -->
+        <div id="rsOldUI2" class="w-full flex flex-col items-center gap-4 hidden">
+            <div class="w-full bg-white border-[3px] border-[#5E4B8B] rounded-[1.5rem] h-[80px] sm:h-[90px] shadow-[0_4px_0_#5E4B8B] relative overflow-hidden flex items-center justify-center">
+                <div class="absolute z-20 border-[3px] sm:border-[4px] border-[#D0021B] rounded-[0.8rem] w-[58px] h-[58px] sm:w-[68px] sm:h-[68px] shadow-[0_0_10px_rgba(208,2,27,0.4)] pointer-events-none"></div>
+                <div id="rsTrackContainer2" class="absolute z-10 w-full h-full flex items-center left-0 top-0 pointer-events-none"></div>
+            </div>
+            <div class="bg-[#F5C57A] border-[3px] border-[#5E4B8B] rounded-xl px-12 py-1 shadow-[0_4px_0_#5E4B8B] z-10 min-w-[120px] min-h-[36px] flex justify-center items-center transition-all" id="rsNameBox2">
+                <span id="rsWinnerName2" class="font-black text-white text-xl sm:text-2xl tracking-widest leading-none" style="text-shadow: 2px 2px 0 #5E4B8B, -2px -2px 0 #5E4B8B, 2px -2px 0 #5E4B8B, -2px 2px 0 #5E4B8B, 0 2px 0 #5E4B8B, 0 -2px 0 #5E4B8B, 2px 0 0 #5E4B8B, -2px 0 0 #5E4B8B;">?</span>
+            </div>
+            <button id="rsStartBtn2" class="bg-[#88D1F1] border-[3px] border-[#5E4B8B] rounded-xl w-[50%] py-2 shadow-[0_4px_0_#5E4B8B] z-10 flex justify-center items-center active:translate-y-1 active:shadow-none hover:brightness-110 transition-all cursor-pointer">
+                <i class="fa-solid fa-shuffle text-white text-3xl sm:text-4xl text-stroke"></i>
+            </button>
+        </div>
+
+        <!-- 【新版 像素级复刻大转盘UI】 (默认显示) -->
+        <div id="rsNewUI2" class="w-full flex flex-col items-center">
+            <div class="relative w-[350px] h-[350px] sm:w-[320px] sm:h-[320px] mt-4 mb-2">
+                <!-- 外圈顶部倒三角 -->
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[#5E4B8B] z-30 drop-shadow-md">
+                    <i class="fa-solid fa-caret-down text-[40px] sm:text-[45px]" style="-webkit-text-stroke: 2px white; paint-order: stroke fill;"></i>
+                </div>
+
+                <!-- 转盘本体 -->
+                <div id="rsWheel2" class="w-full h-full rounded-full border-[4px] border-[#5E4B8B] overflow-hidden relative transition-transform" style="background: conic-gradient(#ccc 0 360deg);">
+                    <div id="rsWheelItems2" class="absolute inset-0 w-full h-full pointer-events-none">
+                    </div>
+                </div>
+
+                <!-- 中心静止遮挡圈与GO按钮区 -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] z-20 flex items-center justify-center">
+                    <div class="w-full h-full bg-white rounded-full border-[4px] border-[#5E4B8B] relative shadow-inner">
+                        <!-- 内圈正三角 -->
+                        <div class="absolute -top-[18px] sm:-top-[18px] left-1/2 -translate-x-1/2 text-[#5E4B8B]">
+                            <i class="fa-solid fa-caret-up text-[40px] sm:text-[28px]" style="-webkit-text-stroke: 1.5px white; paint-order: stroke fill;"></i>
+                        </div>
+                        
+                        <!-- GO 启动按钮 -->
+                        <button id="rsGoBtn2" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75px] h-[75px] sm:w-[90px] sm:h-[90px] bg-[#6ca5eb] border-[3px] border-[#5E4B8B] rounded-full flex items-center justify-center active:scale-90 transition-all cursor-pointer hover:brightness-110" onclick="window.startRandomSelectorV2_2()">
+                            <span class="font-black text-white text-3xl sm:text-4xl tracking-tighter" style="-webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">GO!</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部玩家胶囊池 -->
+            <div id="rsPlayerToggles2" class="w-full mt-6 grid grid-cols-5 gap-[5px] sm:gap-2 px-1">
+                <!-- JS 自动在这里下崽子 -->
+            </div>
+        </div>
+    </div>
+</section>
+
 
 
         </section>
@@ -1588,7 +1651,7 @@
 
         <section id="dataIOSection" class="kawaii-card p-3 sm:p-4 mb-6 flex flex-wrap justify-between items-center gap-2">
             <h2 class="text-sm sm:text-base font-bold text-[#5E4B8B] flex items-center">
-                <i class="fa-solid fa-file-excel text-success mr-2 text-lg"></i>数据备份
+                <i class="fa-solid fa-file-excel text-success mr-2 text-lg"></i>数据管理
             </h2>
             <div class="flex gap-2">
                 <button id="importBtn" class="kawaii-btn !py-1.5 !px-3 sm:!px-4 text-xs sm:text-sm bg-primary text-white shadow-sm">导入Excel</button>
@@ -1723,6 +1786,10 @@
                 </button>
                 <input type="file" id="mmFileInput" class="hidden" accept=".xlsx, .xls">
             </div>
+            <!-- 【图片库】管理入口 -->
+            <button id="mmOpenLibraryFromMainBtn" class="bg-[#617AE9] border-[2px] border-[#333333] px-10 py-2 mt-2 shadow-[2px_2px_0_#333333] active:translate-y-[2px] active:shadow-none transition-all">
+                <span class="font-black text-white text-[18px] tracking-widest drop-shadow-sm"><i class="fa-solid fa-folder-open mr-1"></i>图片库管理</span>
+            </button>
             <!-- 红色清空按钮 -->
             <button id="mmClearBtn" class="bg-[#D84C53] border-[2px] border-[#333333] px-10 py-2 mt-2 shadow-[2px_2px_0_#333333] active:translate-y-[2px] active:shadow-none transition-all">
                 <span class="font-black text-white text-[20px] tracking-widest drop-shadow-sm">清空数据</span>
@@ -1731,6 +1798,8 @@
 
     </div>
 </section>
+
+<!-- ===== 音效控制区已移除，声音还原为原版（仅保留基础 playBeep + 简单 loopSound） ===== -->
 
 <!-- 【全新重构】手机端底部 8 大导航滑动栏 -->
 <nav id="bottomNavBar" class="fixed bottom-0 left-0 w-full bg-[#BBE2D6] border-t-[4px] border-[#5E4B8B] z-[999] px-2 sm:px-4 pt-3 pb-6 flex items-center overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory shadow-[0_-4px_10px_rgba(0,0,0,0.1)] gap-2 sm:gap-4">
@@ -1784,10 +1853,10 @@
         </div>
     </div>
 
-    <!-- 8. 数据备份 (粉紫) -->
+    <!-- 8. 后台管理 (粉紫) -->
     <div class="snap-center shrink-0 flex flex-col items-center justify-center relative cursor-pointer group mobile-tab-btn" data-tab="tab8">
         <div class="w-[58px] h-[58px] sm:w-[65px] sm:h-[65px] bg-[#F472B6] border-[3px] border-[#5E4B8B] rounded-[1rem] flex flex-col items-center justify-center shadow-[0_3px_0_#5E4B8B] transition-transform active:translate-y-1 active:shadow-none relative z-10 tab-icon-box">
-            <span class="font-black text-[#5E4B8B] text-[12px] sm:text-[13px] leading-tight tracking-widest text-center mt-0.5">数据<br>备份</span>
+            <span class="font-black text-[#5E4B8B] text-[12px] sm:text-[13px] leading-tight tracking-widest text-center mt-0.5">后台<br>管理</span>
         </div>
     </div>
  
@@ -1883,12 +1952,26 @@
             <input type="number" id="mmItemNumInput" placeholder="输入数字" class="flex-1 h-[42px] border-[1.5px] border-[#333333] px-2 font-black text-center text-[18px] text-[#333333] focus:outline-none">
         </div>
 
-        <!-- URL -->
+        <!-- 【图片库】图片选择（替代原URL输入框） -->
         <div class="flex items-center gap-3">
             <div class="bg-[#78D1CC] border-[1.5px] border-[#333333] px-2 py-2 w-[100px] shrink-0 flex items-center justify-center">
-                <span class="font-black text-white text-[20px] tracking-widest">URL</span>
+                <span class="font-black text-white text-[20px] tracking-widest">图片</span>
             </div>
-            <input type="text" id="mmItemUrlInput" placeholder="http://" class="flex-1 h-[42px] border-[1.5px] border-[#333333] px-2 font-bold text-center text-[12px] text-[#333333] focus:outline-none">
+            <button id="mmSelectFromLibraryBtn" type="button" class="flex-1 h-[42px] border-[1.5px] border-[#333333] bg-white font-black text-[15px] text-[#333333] active:scale-95 transition-transform flex items-center justify-center gap-2">
+                <i class="fa-solid fa-image text-[#3A8B88]"></i>
+                <span id="mmSelectFromLibraryLabel">从图片库选择</span>
+            </button>
+            <!-- 隐藏的真实URL暂存，保持原 item.url 字段不变 -->
+            <input type="hidden" id="mmItemUrlInput" value="">
+        </div>
+        <!-- 当前已选图片预览 -->
+        <div id="mmItemUrlPreview" class="w-full flex justify-center mb-1"></div>
+
+        <!-- 【图片库】管理入口 -->
+        <div class="flex justify-center mt-1 mb-1">
+            <button id="mmOpenLibraryBtn" type="button" class="bg-[#617AE9] border-[1.5px] border-[#333333] px-4 py-1.5 font-black text-white text-[14px] tracking-widest shadow-[1.5px_1.5px_0_#333333] active:translate-y-[2px] active:shadow-none transition-all">
+                <i class="fa-solid fa-folder-open mr-1"></i>管理图片库
+            </button>
         </div>
 
         <!-- 确认/取消 -->
@@ -1900,6 +1983,41 @@
                 <span class="font-black text-white text-[20px] tracking-widest drop-shadow-sm">取消</span>
             </button>
         </div>
+    </div>
+</div>
+
+<!-- 【图片库】从图片库选择图片弹窗 - 宽屏平铺版 -->
+<div id="mmImageLibraryDialog" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[99999] hidden p-2 sm:p-4">
+    <div class="bg-white border-[2px] border-[#333333] p-3 sm:p-4 w-full max-w-[95vw] lg:max-w-[1200px] shadow-2xl flex flex-col gap-3 relative" style="max-height:90vh;">
+        <div class="bg-[#3A8B88] border-[1.5px] border-[#333333] py-2 font-black text-white text-lg text-center tracking-widest shrink-0 rounded-sm">选择图片（已占用图变暗不可选）</div>
+        <div id="mmImageLibraryGrid" class="flex-1 overflow-y-auto custom-scroll p-2 sm:p-3 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3" style="min-height:240px; max-height:65vh;"></div>
+        <div class="flex justify-between gap-2 shrink-0">
+            <button id="mmImageLibraryManageBtn" class="flex-1 bg-[#617AE9] border-[1.5px] border-[#333333] py-2 font-black text-white text-[14px] tracking-widest active:scale-95 transition-transform rounded-sm">管理图片库</button>
+            <button id="mmImageLibraryCancelBtn" class="flex-1 bg-[#D84C53] border-[1.5px] border-[#333333] py-2 font-black text-white text-[14px] tracking-widest active:scale-95 transition-transform rounded-sm">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 【图片库】图片库管理弹窗（批量导入URL） -->
+<div id="mmLibraryManagerDialog" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[99999] hidden">
+    <div class="bg-white border-[2px] border-[#333333] p-4 max-w-[360px] w-full mx-4 shadow-xl flex flex-col gap-3 relative max-h-[85vh]">
+        <div class="bg-[#EC71A1] border-[1.5px] border-[#333333] py-2 font-black text-white text-lg text-center tracking-widest shrink-0">图片库管理</div>
+        <!-- 单张添加 -->
+        <div class="flex items-center gap-2 shrink-0">
+            <input type="text" id="mmLibSingleName" placeholder="名称(可选)" class="flex-1 h-[36px] border-[1.5px] border-[#333333] px-2 font-bold text-[12px] focus:outline-none">
+            <input type="text" id="mmLibSingleUrl" placeholder="图片URL" class="flex-[2] h-[36px] border-[1.5px] border-[#333333] px-2 font-bold text-[12px] focus:outline-none">
+            <button id="mmLibAddSingleBtn" class="bg-[#A7D674] border-[1.5px] border-[#333333] px-3 h-[36px] font-black text-white text-[14px] active:scale-95">添加</button>
+        </div>
+        <!-- 批量粘贴 -->
+        <div class="shrink-0">
+            <div class="text-[12px] font-bold text-[#333] mb-1">批量导入（每行一个URL，可附名称用 | 分隔）：</div>
+            <textarea id="mmLibBatchInput" placeholder="https://example.com/a.png&#10;我的图|https://example.com/b.png" class="w-full h-[80px] border-[1.5px] border-[#333333] p-2 font-mono text-[12px] focus:outline-none resize-none"></textarea>
+            <button id="mmLibBatchImportBtn" class="w-full mt-1 bg-[#6D82EE] border-[1.5px] border-[#333333] py-1.5 font-black text-white text-[14px] tracking-widest active:scale-95 transition-transform">批量导入</button>
+        </div>
+        <!-- 已有图片列表 -->
+        <div class="text-[12px] font-bold text-[#333] shrink-0">已有图片（点击可复制URL / 删除）：</div>
+        <div id="mmLibList" class="flex-1 overflow-y-auto custom-scroll flex flex-col gap-1 min-h-[80px] max-h-[200px]"></div>
+        <button id="mmLibraryManagerCloseBtn" class="bg-[#D84C53] border-[1.5px] border-[#333333] py-1.5 font-black text-white text-[14px] tracking-widest active:scale-95 transition-transform shrink-0">关闭</button>
     </div>
 </div>
 
@@ -2646,7 +2764,7 @@ const modulesConfig =[
             { id: 'sessionSection', name: '场次记录', icon: 'fa-calendar-days' },
             { id: 'barSection', name: 'ROUND动态条', icon: 'fa-chart-bar' },
             { id: 'tableSection', name: '局次得分详情', icon: 'fa-table' },
-            { id: 'dataIOSection', name: '数据备份', icon: 'fa-file-excel' }
+            { id: 'dataIOSection', name: '后台管理', icon: 'fa-file-excel' }
         ];
         
         const defaultSectionOrder = modulesConfig.map(m => m.id);
@@ -3077,6 +3195,7 @@ let chartInstance = null;
                     confirmBox.classList.add('hidden');
                     checkResetTimer();
                     renderV2ScoreArea();
+                    if(!window._rsaInRender){window._rsaInRender=true;try{if(typeof window.renderRandomSelectorMain2==='function')window.renderRandomSelectorMain2();}finally{window._rsaInRender=false;}}
                 };
             } 
             else if (actionType === 'revive') {
@@ -3100,6 +3219,7 @@ let chartInstance = null;
                     confirmBox.classList.add('hidden');
                     checkResetTimer();
                     renderV2ScoreArea();
+                    if(!window._rsaInRender){window._rsaInRender=true;try{if(typeof window.renderRandomSelectorMain2==='function')window.renderRandomSelectorMain2();}finally{window._rsaInRender=false;}}
                 };
             }
             else if (actionType === 'poison') {
@@ -3118,8 +3238,18 @@ let chartInstance = null;
                     // 强行覆盖为被毒死
                     v2State.eliminated[pid] = poisonMethodName;
                     
+                    // 【修复】在eliminationDetails中记录毒药信息，确保成就统计能正确识别
+                    v2State.eliminationDetails = v2State.eliminationDetails || {};
+                    v2State.eliminationDetails[pid] = {
+                        killerId: pid, // 毒药视为"自己被毒"，killerId设为自身
+                        cards: 0,
+                        time: typeof trElapsedSeconds !== 'undefined' ? trElapsedSeconds : 0,
+                        isPoison: true // 标记此为毒药死亡
+                    };
+                    
                     confirmBox.classList.add('hidden');
                     renderV2ScoreArea();
+                    if(!window._rsaInRender){window._rsaInRender=true;try{if(typeof window.renderRandomSelectorMain2==='function')window.renderRandomSelectorMain2();}finally{window._rsaInRender=false;}}
                 };
             }
 
@@ -3288,6 +3418,8 @@ function syncMethodsLists() {
 }
         let v2TargetPlayerId = null; // 临时记住当前正在操作哪个玩家
         let audioCtx = null;
+
+// ===== 音效控制设置已移除，声音还原为原版 =====
 // 【新增】区间筛选核心变量与逻辑
         let viewRounds =[]; // 当前UI需要展示的轮次数据（根据区间筛选后）
 // 【新增】1V1擂台区专用状态
@@ -3860,6 +3992,10 @@ if (!gameData.customMethods) {
         lose: { categories:[{ id: 'cl_def', name: '无分类', color: '#A1A1AA' }], items:[], defaultMethodId: null }
     };
 }
+// 【图片库】胜利与淘汰共用的独立图片库
+if (!gameData.imageLibrary) {
+    gameData.imageLibrary = { items: [] };
+}
 syncMethodsLists(); // 启动时同步一次列表
                         dataValid = true;
                     }
@@ -3899,6 +4035,16 @@ resetV2State(); // 【V2新增】初始化所有淘汰状态
             // 【新增】：启动大厅背景并自动秒连MQTT
             if(typeof window.renderLobbyBackground === 'function') window.renderLobbyBackground();
             if(typeof window.nlAutoConnect === 'function') window.nlAutoConnect();
+            // 【复制版】初始化复制版随机选择器
+            if(typeof window.renderRandomSelectorMain2 === 'function') window.renderRandomSelectorMain2();
+            // ===== 音效控制区已移除，声音还原为原版 =====
+            // ===== 结算方式管理区默认折叠 =====
+            const mmFold = document.getElementById('mmFoldContent');
+            if (mmFold && !mmFold.classList.contains('hidden')) {
+                mmFold.classList.add('hidden');
+                const mmIcon = document.getElementById('mmTitleIcon');
+                if (mmIcon) mmIcon.classList.add('rotate-180');
+            }
         } // 这是 init() 的结尾大括号
         
 
@@ -4351,6 +4497,353 @@ wheelPlayers.forEach((p, i) => {
         setTimeout(() => {
             if(typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
         }, 300);
+
+// ========================================================
+        // 【复制版引擎】随机选择器核心逻辑 - 复制版（ID全部带2后缀）
+        // ========================================================
+        let rsAnimationId2 = null;
+        let rsIsRunning2 = false;
+
+        function playRSTick2() { if(typeof playBeep === 'function') playBeep(0.3, 800, 0.05); }
+        function playRSClick2() { if(typeof playBeep === 'function') playBeep(0.5, 1200, 0.1); }
+        function playRSWin2() {
+            if(typeof playBeep === 'function') {
+                playBeep(0.5, 600, 0.1);
+                setTimeout(() => playBeep(0.5, 800, 0.2), 100);
+            }
+        };
+
+        // 经典版渲染 - 复制版
+        window.renderRandomSelector2 = function() {
+            const container = document.getElementById('rsTrackContainer2');
+            const nameBox = document.getElementById('rsWinnerName2');
+            if(!container || !nameBox) return;
+
+            const active = gameData.players.filter(p => p.isActive);
+            if(active.length === 0) {
+                container.innerHTML = '<div class="w-full text-center text-[#5E4B8B] font-bold text-xs">暂无玩家</div>';
+                return;
+            }
+
+            const avatarSize = window.innerWidth < 640 ? 46 : 56;
+            const spacing = window.innerWidth < 640 ? 60 : 70;
+
+            let html = '';
+            const centerX = container.clientWidth / 2;
+            nameBox.textContent = '准备';
+
+            let displayList =[];
+            let lastPlayerId = null;
+            for(let i = 0; i < 15; i++) {
+                let available = active.filter(p => p.id !== lastPlayerId);
+                if(available.length === 0) available = active;
+                let nextPlayer = available[i % available.length];
+                displayList.push(nextPlayer);
+                lastPlayerId = nextPlayer.id;
+            }
+            let startOffset = centerX - (Math.floor(displayList.length / 2) * spacing);
+
+            displayList.forEach((p, i) => {
+                const isEliminated = v2State && v2State.eliminated && v2State.eliminated[p.id];
+                let pos = startOffset + i * spacing;
+                let dist = Math.abs(pos - centerX);
+                let scale = Math.max(0.5, 1 - dist * 0.005);
+                let opacity = Math.max(0, 1 - dist * 0.008);
+                let elimFilter = isEliminated ? 'grayscale(100%) brightness(70%)' : 'none';
+                let elimOpacity = isEliminated ? opacity * 0.4 : opacity;
+                let crossHtml = isEliminated ? `
+                    <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                        <div class="absolute w-[120%] h-[3px] sm:h-[4px] bg-[#E11D48] rotate-45 shadow-sm"></div>
+                        <div class="absolute w-[120%] h-[3px] sm:h-[4px] bg-[#E11D48] -rotate-45 shadow-sm"></div>
+                    </div>` : '';
+                html += `
+                <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 border-[2px] sm:border-[3px] border-[#5E4B8B] rounded-[0.6rem] bg-white shadow-sm overflow-hidden flex items-center justify-center"
+                     style="width: ${avatarSize}px; height: ${avatarSize}px; left: ${pos}px; transform: translate(-50%, -50%) scale(${scale}); opacity: ${elimOpacity}; filter: ${elimFilter};">
+                    <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                    ${crossHtml}
+                </div>`;
+            });
+            container.innerHTML = html;
+        };
+
+        // 经典版启动动画 - 复制版
+        window.startRandomSelector2 = function() {
+            if(rsIsRunning2) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            playRSClick2();
+
+            const container = document.getElementById('rsTrackContainer2');
+            const nameBox = document.getElementById('rsWinnerName2');
+            const active = gameData.players.filter(p => p.isActive);
+            const alive = active.filter(p => !(v2State && v2State.eliminated && v2State.eliminated[p.id]));
+            if(alive.length === 0) { nameBox.textContent = '无人存活'; return; }
+
+            rsIsRunning2 = true;
+            nameBox.textContent = '...';
+
+            const winnerIndex = Math.floor(Math.random() * alive.length);
+            const winnerPlayer = alive[winnerIndex];
+            const wheelLength = 60;
+            const stopIndex = 50;
+            let wheel = new Array(wheelLength);
+            wheel[stopIndex] = winnerPlayer;
+
+            for (let i = stopIndex - 1; i >= 0; i--) {
+                let candidates = active.filter(p => p.id !== wheel[i + 1].id);
+                if (active.length > 2 && i + 2 < wheelLength && wheel[i + 2]) {
+                    candidates = candidates.filter(p => p.id !== wheel[i + 2].id);
+                }
+                if (candidates.length === 0) candidates = active;
+                wheel[i] = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+            for (let i = stopIndex + 1; i < wheelLength; i++) {
+                let candidates = active.filter(p => p.id !== wheel[i - 1].id);
+                if (active.length > 2 && i - 2 >= 0 && wheel[i - 2]) {
+                    candidates = candidates.filter(p => p.id !== wheel[i - 2].id);
+                }
+                if (candidates.length === 0) candidates = active;
+                wheel[i] = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+
+            const avatarSize = window.innerWidth < 640 ? 46 : 56;
+            const spacing = window.innerWidth < 640 ? 60 : 70;
+            const centerX = container.clientWidth / 2;
+            const duration = 4000;
+            const totalDistance = stopIndex * spacing;
+            let startTime = null;
+            let lastTickIndex = 0;
+
+            function drawFrame2(timestamp) {
+                if (!startTime) startTime = timestamp;
+                let elapsed = timestamp - startTime;
+                let t = Math.min(elapsed / duration, 1);
+                let easeT = 1 - Math.pow(1 - t, 3);
+                let currentOffset = easeT * totalDistance;
+                let currentTickIndex = Math.floor(currentOffset / spacing);
+                if(currentTickIndex > lastTickIndex && currentTickIndex < stopIndex) {
+                    playRSTick2();
+                    lastTickIndex = currentTickIndex;
+                }
+                let html = '';
+                wheel.forEach((p, i) => {
+                    let pos = centerX + (i * spacing) - currentOffset;
+                    if(pos < -100 || pos > container.clientWidth + 100) return;
+                    let dist = Math.abs(pos - centerX);
+                    let scale = Math.max(0.5, 1 - dist * 0.004);
+                    let opacity = Math.max(0, 1 - dist * 0.007);
+                    const isEliminated = v2State && v2State.eliminated && v2State.eliminated[p.id];
+                    let elimFilter = isEliminated ? 'grayscale(100%) brightness(70%)' : 'none';
+                    let elimOpacity = isEliminated ? opacity * 0.4 : opacity;
+                    let crossHtml = isEliminated ? `
+                        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                            <div class="absolute w-[120%] h-[3px] sm:h-[4px] bg-[#E11D48] rotate-45 shadow-sm"></div>
+                            <div class="absolute w-[120%] h-[3px] sm:h-[4px] bg-[#E11D48] -rotate-45 shadow-sm"></div>
+                        </div>` : '';
+                    html += `
+                    <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 border-[2px] sm:border-[3px] border-[#5E4B8B] rounded-[0.6rem] bg-white shadow-sm overflow-hidden flex items-center justify-center"
+                         style="width: ${avatarSize}px; height: ${avatarSize}px; left: ${pos}px; transform: translate(-50%, -50%) scale(${scale}); opacity: ${elimOpacity}; filter: ${elimFilter};">
+                        <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                        ${crossHtml}
+                    </div>`;
+                });
+                container.innerHTML = html;
+                if (t < 1) {
+                    rsAnimationId2 = requestAnimationFrame(drawFrame2);
+                } else {
+                    rsIsRunning2 = false;
+                    playRSWin2();
+                    let shortName = winnerPlayer.name ? winnerPlayer.name.slice(-1) : '?';
+                    nameBox.textContent = shortName;
+                    nameBox.style.backgroundColor = winnerPlayer.color;
+                    nameBox.style.transform = 'scale(1.1)';
+                    setTimeout(() => nameBox.style.transform = 'scale(1)', 200);
+                }
+            }
+            rsAnimationId2 = requestAnimationFrame(drawFrame2);
+        };
+
+        // ===== 复制版：大转盘参数 =====
+        window.rsAnimDuration2 = 2.5;
+        window.rsSpins2 = 5;
+        window.rsLineThickness2 = 1.5;
+        window.rsLineColor2 = '#5E4B8B';
+        window.rsCurrentUI2 = window.rsCurrentUI2 || 'new';
+        window.rsExcludedPlayers2 = window.rsExcludedPlayers2 || new Set();
+        window.rsCurrentRotation2 = window.rsCurrentRotation2 || 0;
+        window.rsIsRunningV2_2 = false;
+
+        // 切换UI - 复制版
+        window.toggleRSUI2 = function() {
+            if(window.rsIsRunningV2_2 || rsIsRunning2) return;
+            const btn = document.getElementById('rsSwitchUIBtn2');
+            const oldUI = document.getElementById('rsOldUI2');
+            const newUI = document.getElementById('rsNewUI2');
+            if(!btn || !oldUI || !newUI) return;
+            if (window.rsCurrentUI2 === 'new') {
+                window.rsCurrentUI2 = 'old';
+                btn.textContent = '切换转盘版';
+                newUI.classList.add('hidden');
+                oldUI.classList.remove('hidden');
+                if(typeof window.renderRandomSelectorOld2 === 'function') window.renderRandomSelectorOld2();
+            } else {
+                window.rsCurrentUI2 = 'new';
+                btn.textContent = '切换经典版';
+                oldUI.classList.add('hidden');
+                newUI.classList.remove('hidden');
+                if(typeof window.renderRandomSelectorV2_2 === 'function') window.renderRandomSelectorV2_2();
+            }
+        };
+
+        // 大转盘渲染 - 复制版
+        window.renderRandomSelectorV2_2 = function() {
+            const wheel = document.getElementById('rsWheel2');
+            const itemsContainer = document.getElementById('rsWheelItems2');
+            const togglesContainer = document.getElementById('rsPlayerToggles2');
+            if(!wheel || !itemsContainer || !togglesContainer) return;
+
+            const active = gameData.players.filter(p => p.isActive);
+            const alive = active.filter(p => !(v2State && v2State.eliminated && v2State.eliminated[p.id]));
+
+            let togglesHtml = '';
+            alive.forEach(p => {
+                let isExcluded = window.rsExcludedPlayers2.has(p.id);
+                let opacityClass = isExcluded ? 'opacity-40 grayscale' : 'opacity-100';
+                let shortName = p.name ? p.name.slice(-1) : '?';
+                togglesHtml += `
+                <div class="flex items-center justify-center border-[2.5px] border-[#5E4B8B] rounded-[8px] px-1 py-[3px] shadow-[0_3px_0_#5E4B8B] cursor-pointer transition-all ${opacityClass} active:translate-y-1 active:shadow-none rs-toggle-btn" data-id="${p.id}" style="background-color: ${p.color};" onclick="window.toggleRSParticipant2(${p.id})">
+                    <div class="w-6 h-6 sm:w-[18px] sm:h-[18px] rounded-[4px] border-[1.5px] border-[#5E4B8B] bg-black overflow-hidden shrink-0 flex items-center justify-center">
+                        <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                    </div>
+                    <span class="font-black text-white text-[16px] sm:text-[13px] text-stroke pl-1 leading-none" style="-webkit-text-stroke: 4px #5E4B8B;">${shortName}</span>
+                </div>`;
+            });
+            togglesContainer.innerHTML = togglesHtml;
+
+            const wheelPlayers = alive.filter(p => !window.rsExcludedPlayers2.has(p.id));
+            if(wheelPlayers.length === 0) {
+                wheel.style.backgroundImage = 'conic-gradient(from 0deg, #e5e7eb 0deg, #e5e7eb 360deg)';
+                itemsContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center font-black text-gray-400 text-lg">全员离线</div>';
+                return;
+            }
+
+            let N = wheelPlayers.length;
+            let anglePerPlayer = 360 / N;
+            let gradientStops =[];
+            let itemsHtml = '';
+            let translateY = window.innerWidth < 640 ? 110 : 130;
+
+            wheelPlayers.forEach((p, i) => {
+                let startAng = i * anglePerPlayer;
+                let endAng = (i + 1) * anglePerPlayer;
+                if(window.rsLineThickness2 > 0 && N > 1) {
+                    gradientStops.push(`${p.color} ${startAng}deg`);
+                    gradientStops.push(`${p.color} ${endAng - window.rsLineThickness2}deg`);
+                    gradientStops.push(`${window.rsLineColor2} ${endAng - window.rsLineThickness2}deg`);
+                    gradientStops.push(`${window.rsLineColor2} ${endAng}deg`);
+                } else {
+                    gradientStops.push(`${p.color} ${startAng}deg`);
+                    gradientStops.push(`${p.color} ${endAng}deg`);
+                }
+                let midAng = startAng + anglePerPlayer / 2;
+                let shortName = p.name ? p.name.slice(-1) : '?';
+                itemsHtml += `
+                <div class="absolute top-1/2 left-1/2 flex flex-col items-center justify-center -ml-[30px] -mt-[40px] w-[60px] h-[80px]" style="transform: rotate(${midAng}deg) translateY(-${translateY}px);">
+                    <div class="w-[45px] h-[45px] sm:w-[40px] sm:h-[40px] rounded-[6px] border-[2px] border-[#5E4B8B] bg-black overflow-hidden mb-1 shadow-sm shrink-0">
+                        <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                    </div>
+                    <span class="font-black text-white text-[25px] sm:text-[16px] tracking-widest leading-none drop-shadow-md" style="-webkit-text-stroke: 5px #5E4B8B; paint-order: stroke fill;">${shortName}</span>
+                </div>`;
+            });
+            wheel.style.backgroundImage = `conic-gradient(from 0deg, ${gradientStops.join(', ')})`;
+            itemsContainer.innerHTML = itemsHtml;
+        };
+
+        // 切换参与者 - 复制版
+        window.toggleRSParticipant2 = function(id) {
+            if(window.rsIsRunningV2_2 || rsIsRunning2) return;
+            if(window.rsExcludedPlayers2.has(id)) window.rsExcludedPlayers2.delete(id);
+            else window.rsExcludedPlayers2.add(id);
+            window.renderRandomSelectorV2_2();
+        };
+
+        // GO按钮启动转盘 - 复制版
+        window.startRandomSelectorV2_2 = function() {
+            if(window.rsIsRunningV2_2) return;
+            const active = gameData.players.filter(p => p.isActive);
+            const alive = active.filter(p => !(v2State && v2State.eliminated && v2State.eliminated[p.id]));
+            const wheelPlayers = alive.filter(p => !window.rsExcludedPlayers2.has(p.id));
+            if(wheelPlayers.length === 0) return;
+
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            playRSClick2();
+
+            window.rsIsRunningV2_2 = true;
+            let winnerIndex = Math.floor(Math.random() * wheelPlayers.length);
+            let N = wheelPlayers.length;
+            let anglePerPlayer = 360 / N;
+            let midAng = winnerIndex * anglePerPlayer + anglePerPlayer / 2;
+            let currentMod = window.rsCurrentRotation2 % 360;
+            let targetMod = (360 - midAng) % 360;
+            if (targetMod < 0) targetMod += 360;
+            let diff = targetMod - currentMod;
+            if (diff <= 0) diff += 360;
+            let addedRotation = window.rsSpins2 * 360 + diff;
+            window.rsCurrentRotation2 += addedRotation;
+
+            const wheel = document.getElementById('rsWheel2');
+            wheel.style.transition = `transform ${window.rsAnimDuration2}s cubic-bezier(0.4, 0, 0.2, 1)`;
+            wheel.style.transform = `rotate(${window.rsCurrentRotation2}deg)`;
+
+            let tickCount = Math.floor(addedRotation / anglePerPlayer);
+            let tickInterval = (window.rsAnimDuration2 * 1000) / tickCount;
+            let soundTimer = setInterval(() => {
+                playRSTick2();
+            }, Math.max(120, tickInterval));
+
+            setTimeout(() => {
+                clearInterval(soundTimer);
+                window.rsIsRunningV2_2 = false;
+                playRSWin2();
+                wheel.classList.add('scale-[1.04]');
+                setTimeout(() => wheel.classList.remove('scale-[1.04]'), 250);
+            }, window.rsAnimDuration2 * 1000);
+        };
+
+        // 统一入口 - 复制版
+        if (!window.rsWrapperInstalled2) {
+            window.renderRandomSelectorOld2 = window.renderRandomSelector2;
+            window.rsWrapperInstalled2 = true;
+        }
+        window.renderRandomSelectorMain2 = function() {
+            if(window.rsCurrentUI2 === 'new') {
+                if(typeof window.renderRandomSelectorV2_2 === 'function') window.renderRandomSelectorV2_2();
+            } else {
+                if(window.renderRandomSelectorOld2) window.renderRandomSelectorOld2();
+            }
+        };
+
+        // 接管全局更新链 - 复制版
+        if (!window.rsAutoUpdateHooked2) {
+            const rsTempUpdate2 = window.updateAllUI;
+            window.updateAllUI = function() {
+                // 重入锁：防止 updateAllUI→renderV2ScoreArea→updateAllUI 死循环
+                if (window._rsaUpdating) { rsTempUpdate2(); return; }
+                window._rsaUpdating = true;
+                try {
+                    rsTempUpdate2();
+                    if(typeof window.renderRandomSelectorMain2 === 'function') window.renderRandomSelectorMain2();
+                } finally { window._rsaUpdating = false; }
+            };
+            window.rsAutoUpdateHooked2 = true;
+        }
+
+        // 兜底渲染 - 复制版
+        setTimeout(() => {
+            if(typeof window.renderRandomSelectorMain2 === 'function') window.renderRandomSelectorMain2();
+        }, 400);
+// ========================================================
         // ========================================================
         // 【新增函数】生成 Web Audio 蜂鸣声
         function playBeep(vol, freq, duration) {
@@ -4372,7 +4865,7 @@ wheelPlayers.forEach((p, i) => {
             osc.stop(audioCtx.currentTime + duration);
         }
 
-        // 【新增函数】管理滴滴声的频率与音量
+        // 【新增函数】管理滴滴声的频率与音量（原版：按剩余时间分4档）
         function loopSound() {
             if (!isTimerRunning || timerRemain <= 0) return;
 // 【副机静音魔法】如果是副机或观众，直接静音，不播放过程滴滴声！
@@ -4404,7 +4897,7 @@ wheelPlayers.forEach((p, i) => {
             timerSoundTimeout = setTimeout(loopSound, interval);
         }
 
-        // 【新增函数】更新进度条及时间显示
+// 【新增函数】更新进度条及时间显示
         function updateTimerUI() {
             const m = String(Math.floor(timerRemain / 60)).padStart(2, '0');
             const s = String(timerRemain % 60).padStart(2, '0');
@@ -4420,8 +4913,52 @@ wheelPlayers.forEach((p, i) => {
             document.getElementById('timerBar').style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
         }
 
+        // 【语音播报统一底层引擎】
+        function speakCountdownText(text, rate = 1.3) {
+            if (!('speechSynthesis' in window)) return;
+            // 副机/观众端静音，防止多设备声音重叠
+            if ((typeof isAudienceMode !== 'undefined' && isAudienceMode) || (typeof myRole !== 'undefined' && myRole === 'client')) return;
+
+            window.speechSynthesis.cancel(); // 清理上一句，防止声音堆积延误
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-CN';
+            utter.rate = rate;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // 【秒数单字播报：如 34 读作“三 四”】
+        function speakCountdownNumber(sec) {
+            const digitMap = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+            const text = String(sec).split('').map(d => digitMap[parseInt(d)]).join(' ');
+            speakCountdownText(text, 1.3);
+        }
+
+        // 【倒计时语音分发调度器】
+        function checkAndSpeakTimer(remainSec) {
+            if (remainSec <= 0) return;
+
+            // 1. 整分钟播报（当秒数为整点 00 秒时）
+            if (remainSec % 60 === 0) {
+                const mins = remainSec / 60;
+                if (mins === 3) {
+                    speakCountdownText('最后3分钟', 1.3);
+                } else if (mins === 2) {
+                    speakCountdownText('最后2分钟', 1.3);
+                } else if (mins === 1) {
+                    // 稍快语速，0.7秒内播完“最后1分钟”，给59秒留出充足空隙
+                    speakCountdownText('最后1分钟', 1.4);
+                } else if (mins > 3) {
+                    speakCountdownText(`还剩${mins}分钟`, 1.3);
+                }
+            } 
+            // 2. 59秒及以下：逐秒播报数字
+            else if (remainSec <= 59) {
+                speakCountdownNumber(remainSec);
+            }
+        }
+
         // 【新增函数】启动计时器
-function startTimer() {
+        function startTimer() {
             if (isTimerRunning || timerRemain <= 0) return;
             if (myRole === 'client') return; // 【拒绝拉扯】如果是玩家或观众，拒绝本地自主跑秒，全程听主机指挥
             isTimerRunning = true;
@@ -4433,9 +4970,13 @@ function startTimer() {
                 audioCtx.resume();
             }
 
-timerInterval = setInterval(() => {
+            timerInterval = setInterval(() => {
                 timerRemain--;
                 localStorage.setItem('unoTimerRemain', timerRemain); // 实时固化保存秒数
+
+                // 【智能语音播报检查：整分钟提醒 + 59秒倒计时】
+                checkAndSpeakTimer(timerRemain);
+
                 if (timerRemain <= 0) {
                     timerRemain = 0;
                     stopTimer();
@@ -4469,6 +5010,7 @@ timerInterval = setInterval(() => {
             isTimerRunning = false;
             clearInterval(timerInterval);
             clearTimeout(timerSoundTimeout);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); // 暂停时立刻停止语音
             const toggleBtn = document.getElementById('timerToggleBtn');
             toggleBtn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
             toggleBtn.classList.replace('bg-[#F59E0B]', 'bg-[#4ADE80]');
@@ -4477,6 +5019,7 @@ timerInterval = setInterval(() => {
         // 【新增函数】复位计时器
         function resetTimer() {
             stopTimer();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); // 复位时立刻停止语音
             timerRemain = timerTotal;
             updateTimerUI();
         }
@@ -4829,6 +5372,9 @@ p.reviveCount = 0; p.firstBloodCount = 0; p.winMethods = {}; p.loseMethods = {};
                 p.longestSurviveRound = '-';
                 p.totalSurviveTime = 0;
                 p.totalPlayedTime = 0;
+                // --- PK之王 (1v1擂台胜率) ---
+                p.pkWins = 0;
+                p.pkLosses = 0;
             });
 
 initAchievements();
@@ -4913,13 +5459,16 @@ if (p.total > p.maxTotal) { p.maxTotal = p.total; p.maxTotalRound = r.round; }
                         p.totalPlayedTime += rTime; // 累加参加总时长
                         
                         let sTime = rTime; // 默认活到了最后
-                        if (r.v2Stats.eliminated && r.v2Stats.eliminated[p.id]) {
+                        let wasEliminated = r.v2Stats.eliminated && r.v2Stats.eliminated[p.id];
+                        if (wasEliminated) {
                             // 如果被淘汰了，提取淘汰死亡的真实时间
-                            if (r.v2Stats.eliminationDetails && r.v2Stats.eliminationDetails[p.id] && r.v2Stats.eliminationDetails[p.id].time !== undefined) {
-                                sTime = r.v2Stats.eliminationDetails[p.id].time;
+                            let det = (r.v2Stats.eliminationDetails && r.v2Stats.eliminationDetails[p.id]) || {};
+                            if (det.time !== undefined && det.time > 0) {
+                                // 【修复】只有当秒表真的跑过（time>0）才采用，否则保留rTime
+                                sTime = det.time;
                             }
-                            // 记录最快暴毙记录
-                            if (sTime < p.fastestElimTime) {
+                            // 【修复】最快淘汰：只用有效时间（>0），跳过忘记按计时器的0值
+                            if (sTime > 0 && sTime < p.fastestElimTime) {
                                 p.fastestElimTime = sTime;
                                 p.fastestElimRound = r.round;
                             }
@@ -4990,9 +5539,11 @@ activeInRound.forEach(id => {
                         let p = gameData.players.find(x => x.id === pid);
                         if (p) {
 // 【优化升级：Y2 毒药双向绑定引擎】
-                            // 只要死法名字叫 "Y2" (不区分大小写)，或者等于系统设定的毒药名称，全部判定为被毒死！
+                            // 只要死法名字叫 "Y2" (不区分大小写)，或者等于系统设定的毒药名称，或全部判定为被毒死！
                             let currentMethod = r.v2Stats.eliminated[pidStr];
-                            if (currentMethod === poisonMethodName || currentMethod.toUpperCase() === 'Y2') {
+                            let det = (r.v2Stats.eliminationDetails && r.v2Stats.eliminationDetails[pidStr]) || {};
+                            let isPoisoned = (currentMethod === poisonMethodName || currentMethod.toUpperCase() === 'Y2' || det.isPoison === true);
+                            if (isPoisoned) {
                                 p.poisonedCount++;
                             }
 
@@ -7019,6 +7570,14 @@ function renderAchievements() {
             let shortestGame = { time: Infinity, rNum: '-', winner: null, score: 0 };
             let fastestElim = { time: Infinity, rNum: '-', victim: null, score: 0 };
             let highestPenalty = { cards: 0, rNum: '-', victim: null, method: '-', score: 0 };
+            // 最极限获胜：倒计时剩余时间最少 = 最极限（无倒计时时，正向计时用时最多 = 最极限）
+            // remainAtEnd: 正数=倒计时场景的剩余秒数; 0=无倒计时或归零
+            // 用 remainAtEnd 升序排（越小越极限）；无倒计时时按 rTime 降序排
+            let clutchWin = { time: 0, rNum: '-', winner: null, score: 0, remainAtEnd: Infinity };
+            
+            // PK之王：统计1v1擂台胜负
+            // ovoMatches 收集
+            let ovoMatches = [];
             
             let pStats = {};
             active.forEach(p => pStats[p.id] = { firstBloods: 0, revives: 0, poisoned: 0, kills: 0 });
@@ -7034,6 +7593,41 @@ function renderAchievements() {
                     if (rTime < shortestGame.time) shortestGame = { time: rTime, rNum: r.round, winner: r.winner, score: winScore };
                 }
 
+                // ===== 最极限获胜统计（修复版）=====
+                // 规则：
+                //   1) 有倒计时且 timerRemainAtEnd > 0：这是倒计时场景，remain 越小越极限
+                //   2) 无倒计时（timerRemainAtEnd 为 0/undefined/null）且 rTime > 0：纯正向计时，rTime 越大越极限
+                if (r.winner) {
+                    let remain = r.v2Stats.timerRemainAtEnd;
+                    let winScore2 = r.changes[r.winner] || 0;
+                    let isCountdownRound = (remain !== undefined && remain !== null && remain > 0);
+                    if (isCountdownRound) {
+                        // 倒计时场景：剩余时间越少越极限
+                        if (remain < clutchWin.remainAtEnd) {
+                            clutchWin = { time: rTime, rNum: r.round, winner: r.winner, score: winScore2, remainAtEnd: remain };
+                        }
+                    } else {
+                        // 无倒计时或倒计时归零：用正向计时，用时越长越极限
+                        // 仅当当前记录还不是倒计时类型时才用正向计时覆盖
+                        if (clutchWin.remainAtEnd === Infinity && rTime > clutchWin.time) {
+                            clutchWin = { time: rTime, rNum: r.round, winner: r.winner, score: winScore2, remainAtEnd: 0 };
+                        }
+                    }
+                }
+
+                // ===== PK之王：收集1v1擂台对局（只收集到ovoMatches，不污染gameData）=====
+                if (r.v2Stats.eliminationEvents && r.v2Stats.eliminationEvents.length > 0) {
+                    let lastEvent = r.v2Stats.eliminationEvents[r.v2Stats.eliminationEvents.length - 1];
+                    if (lastEvent.length === 1 && r.winner) {
+                        let loserId = lastEvent[0];
+                        let winnerId = r.winner;
+                        // 只统计当前活跃玩家之间的对局
+                        if (active.find(p=>p.id===winnerId) && active.find(p=>p.id===loserId)) {
+                            ovoMatches.push({ round: r.round, winner: winnerId, loser: loserId });
+                        }
+                    }
+                }
+
                 if (r.v2Stats.revivedPlayerId && pStats[r.v2Stats.revivedPlayerId]) pStats[r.v2Stats.revivedPlayerId].revives++;
                 if (r.v2Stats.eliminationEvents && r.v2Stats.eliminationEvents.length > 0) {
                     r.v2Stats.eliminationEvents[0].forEach(id => { if (pStats[id]) pStats[id].firstBloods++; });
@@ -7043,17 +7637,40 @@ function renderAchievements() {
                     for (let pid in r.v2Stats.eliminated) {
                         let id = parseInt(pid);
                         let method = r.v2Stats.eliminated[pid];
-                        let details = r.v2Stats.eliminationDetails[pid];
+                        let details = r.v2Stats.eliminationDetails[pid] || {};
                         let pScore = r.changes[id] !== undefined ? r.changes[id] : 0;
 
+                        // 最快淘汰：仅用有效时间（>0）
                         let eTime = details.time !== undefined ? details.time : rTime;
                         if (eTime > 0 && eTime < fastestElim.time) fastestElim = { time: eTime, rNum: r.round, victim: id, score: pScore };
 
                         let c = parseInt(details.cards) || 0;
                         if (c > highestPenalty.cards) highestPenalty = { cards: c, rNum: r.round, victim: id, method: method, score: pScore };
-                        if (method === poisonMethodName && pStats[id]) pStats[id].poisoned++;
-                        if (details.killerId && pStats[details.killerId] && details.killerId !== id) pStats[details.killerId].kills++;
+                        // 毒药检测：同时检查 method 名称和 isPoison 标记
+                        let isPois = (method === poisonMethodName || method.toUpperCase() === 'Y2' || details.isPoison === true);
+                        if (isPois && pStats[id]) pStats[id].poisoned++;
+                        if (details && details.killerId && pStats[details.killerId] && details.killerId !== id) pStats[details.killerId].kills++;
                     }
+                }
+            });
+
+            // ===== 计算PK之王（从ovoMatches提取，和1V1擂台主信息完全一致）=====
+            // 先清零，再重新统计（防止重复累加）
+            active.forEach(p => { p._pkWins = 0; p._pkLosses = 0; p._pkTotal = 0; p._pkRate = -1; });
+            ovoMatches.forEach(m => {
+                let wp = active.find(p => p.id === m.winner);
+                let lp = active.find(p => p.id === m.loser);
+                if (wp) { wp._pkWins = (wp._pkWins || 0) + 1; }
+                if (lp) { lp._pkLosses = (lp._pkLosses || 0) + 1; }
+            });
+            let pkKing = null;
+            let pkKingRate = -1;
+            active.forEach(p => {
+                p._pkTotal = (p._pkWins || 0) + (p._pkLosses || 0);
+                p._pkRate = p._pkTotal > 0 ? (p._pkWins / p._pkTotal) : -1;
+                if (p._pkTotal > 0 && p._pkRate > pkKingRate) {
+                    pkKingRate = p._pkRate;
+                    pkKing = p;
                 }
             });
 
@@ -7155,6 +7772,19 @@ function renderAchievements() {
             let p10 = getP(fastestElim.victim);
             html += makeCard('最快淘汰', '#F472B6', uiPlayer(p10) + (p10 ? uiVal(formatTime(fastestElim.time), '#5E4B8B') + uiVal(fastestElim.score, '#E11D48') + uiRound(fastestElim.rNum) : ''));
 
+            // 10b. 最极限获胜 (橙红 #FF6B35) -> [玩家] [白底橙字时间] [白底绿字分] [白底紫字局数]
+            // 含义：倒计时剩余时间最少时获胜 = 在悬崖边上绝杀；无倒计时则正向计时用时最长
+            let pClutch = getP(clutchWin.winner);
+            let clutchDisplay;
+            if (clutchWin.remainAtEnd > 0 && clutchWin.remainAtEnd !== Infinity) {
+                clutchDisplay = uiVal(formatTime(clutchWin.remainAtEnd), '#FF6B35'); // 倒计时场景：显示剩余时间（越少越极限）
+            } else if (clutchWin.time > 0) {
+                clutchDisplay = uiVal(formatTime(clutchWin.time), '#FF6B35');         // 正向计时场景：显示已用时间（越多越极限）
+            } else {
+                clutchDisplay = uiVal('--:--', '#FF6B35');
+            }
+            html += makeCard('最极限获胜', '#FF6B35', uiPlayer(pClutch) + (pClutch && clutchWin.time > 0 ? clutchDisplay + uiVal('+'+clutchWin.score, '#65A30D') + uiRound(clutchWin.rNum) : ''));
+
             // 11. 最多一血 (红 #DC2626) -> [玩家] [白底红字数字]
             html += makeCard('最多一血', '#e5004f', uiPlayer(topFB.p) + (topFB.p ? uiVal(topFB.c, '#E11D48') : ''));
 
@@ -7167,6 +7797,12 @@ function renderAchievements() {
 
             // 15. 淘汰别人最多次 (淡蓝 #93C5FD) -> [玩家] [白底紫字数字]
             html += makeCard('淘汰别人最多次', '#389ff5', uiPlayer(topKill.p) + (topKill.p ? uiVal(topKill.c, '#5E4B8B') : ''));
+
+            // 16. PK之王 (金橙 #F59E0B) -> [玩家] [白底橙字X局X胜]
+            let pkTotal = (pkKing && pkKing._pkTotal) ? pkKing._pkTotal : 0;
+            let pkWins = (pkKing && pkKing._pkWins) ? pkKing._pkWins : 0;
+            let pkText = pkTotal > 0 ? (pkTotal + '局' + pkWins + '胜') : '';
+            html += makeCard('PK之王', '#F59E0B', uiPlayer(pkKing) + (pkKing && pkTotal > 0 ? uiVal(pkText, '#D97706') : ''));
 
             // 最终拼装输出！
             grid.innerHTML = html;
@@ -8644,6 +9280,41 @@ els.playerList.addEventListener('input', e => {
                                 gameData = parsed;
                                 if(!gameData.sessions) gameData.sessions =[];
                                 if(!gameData.sectionOrder) gameData.sectionOrder = [...defaultSectionOrder];
+                                // ===== 向后兼容：补齐旧导出数据缺失的字段 =====
+                                if (!gameData.customMethods) gameData.customMethods = { win: { categories: [{id:'def',name:'无分类',color:'#A1A1AA'}], items:[] }, lose: { categories: [{id:'def',name:'无分类',color:'#A1A1AA'}], items:[] } };
+                                if (!gameData.imageLibrary) gameData.imageLibrary = { items: [] };
+                                // 为每位玩家补齐统计字段
+                                gameData.players.forEach(p => {
+                                    if (p.pkWins === undefined) p.pkWins = 0;
+                                    if (p.pkLosses === undefined) p.pkLosses = 0;
+                                    if (p.poisonedCount === undefined) p.poisonedCount = 0;
+                                    if (p.totalKills === undefined) p.totalKills = 0;
+                                    if (p.fastestElimTime === undefined) p.fastestElimTime = Infinity;
+                                    if (p.fastestElimRound === undefined) p.fastestElimRound = '-';
+                                    if (p.longestSurviveTime === undefined) p.longestSurviveTime = 0;
+                                    if (p.longestSurviveRound === undefined) p.longestSurviveRound = '-';
+                                    if (p.totalSurviveTime === undefined) p.totalSurviveTime = 0;
+                                    if (p.totalPlayedTime === undefined) p.totalPlayedTime = 0;
+                                    if (p.killStats === undefined) p.killStats = {};
+                                    if (p.killedByStats === undefined) p.killedByStats = {};
+                                    if (p.selfKilled === undefined) p.selfKilled = 0;
+                                    if (p.bloodStats === undefined) p.bloodStats = {};
+                                    if (p.winMethods === undefined) p.winMethods = {};
+                                    if (p.loseMethods === undefined) p.loseMethods = {};
+                                    if (p.reviveCount === undefined) p.reviveCount = 0;
+                                    if (p.firstBloodCount === undefined) p.firstBloodCount = 0;
+                                });
+                                // 为每局rounds补齐v2Stats缺失字段
+                                if (Array.isArray(gameData.rounds)) {
+                                    gameData.rounds.forEach(r => {
+                                        if (!r.v2Stats) r.v2Stats = {};
+                                        if (r.v2Stats.stopwatchTime === undefined) r.v2Stats.stopwatchTime = 0;
+                                        if (r.v2Stats.timerRemainAtEnd === undefined) r.v2Stats.timerRemainAtEnd = 0;
+                                        if (!r.v2Stats.eliminationDetails) r.v2Stats.eliminationDetails = {};
+                                        if (!r.v2Stats.eliminationEvents) r.v2Stats.eliminationEvents = [];
+                                        if (!r.v2Stats.eliminated) r.v2Stats.eliminated = {};
+                                    });
+                                }
                                 saveData();
                                 location.reload(); 
                                 return;
@@ -9299,6 +9970,7 @@ function bindV2Events() {
 
         stopTimer(); 
         renderV2ScoreArea();
+        if(!window._rsaInRender){window._rsaInRender=true;try{if(typeof window.renderRandomSelectorMain2==='function')window.renderRandomSelectorMain2();}finally{window._rsaInRender=false;}}
     });
 
     els.cancelWinMethodBtn.onclick = () => {
@@ -9314,6 +9986,7 @@ function bindV2Events() {
         }
         v2State.winnerId = null; v2State.winMethod = null;
         renderV2ScoreArea();
+        if(!window._rsaInRender){window._rsaInRender=true;try{if(typeof window.renderRandomSelectorMain2==='function')window.renderRandomSelectorMain2();}finally{window._rsaInRender=false;}}
     };
 
     // 核心计算逻辑
@@ -9357,8 +10030,10 @@ function bindV2Events() {
                 winMethod: v2State.winMethod, 
                 eliminated: {...v2State.eliminated},
                 eliminationEvents: JSON.parse(JSON.stringify(v2State.eliminationEvents)), // 【新增】保存这一局的淘汰顺序
+                eliminationDetails: JSON.parse(JSON.stringify(v2State.eliminationDetails || {})), // 【修复】保存淘汰详情（含time/killerId/cards）
                 revivedPlayerId: v2State.revivedPlayerId, // 【新增】保存谁复活了
-                timerRemainAtEnd: timerRemain // 【新增】保存定格时间
+                timerRemainAtEnd: timerRemain, // 【新增】保存定格时间
+                stopwatchTime: typeof trElapsedSeconds !== 'undefined' ? trElapsedSeconds : 0 // 【修复】保存正向计时器时间
             }
         });
 
@@ -9428,6 +10103,20 @@ gameData.currentSessionIndex = -1;
                 if(typeof window.startRandomSelector === 'function') window.startRandomSelector();
             };
         }
+
+// 【复制版】绑定复制版随机选择器按钮事件
+        const btnStartRandom2 = document.getElementById('rsStartBtn2');
+        if (btnStartRandom2) {
+            btnStartRandom2.onclick = () => {
+                if(typeof window.startRandomSelector2 === 'function') window.startRandomSelector2();
+            };
+        }
+        const btnGo2 = document.getElementById('rsGoBtn2');
+        if (btnGo2) {
+            btnGo2.onclick = () => {
+                if(typeof window.startRandomSelectorV2_2 === 'function') window.startRandomSelectorV2_2();
+            };
+        }
 // ==========================================================
 // ★★★ 手机端专属：底部导航与 5大分类引擎 ★★★
 // ==========================================================
@@ -9440,7 +10129,7 @@ const mobileTabs = {
 'tab5': { name: '详细数据', color: '#93C5FD', modules:['timeHistorySection', 'scoreFlowSection', 'pieChartSection', 'methodStatSection', 'methodDetailSection', 'chartSection', 'radarSection', 'oneVsOneSection', 'sessionSection', 'tableSection'] },
         'tab6': { name: '随机抽选', color: '#7dd3fc', modules:['randomSelectorSection'] },
         'tab7': { name: '实时结算', color: '#d8b4e2', modules:['playerSection', 'timeRecordSection', 'timerSection', 'penaltySection', 'penaltyStatsSection'] },
-        'tab8': { name: '数据备份', color: '#F472B6', modules:['cloudShareSection', 'methodManagerSection', 'dataIOSection'] },
+        'tab8': { name: '后台管理', color: '#F472B6', modules:['cloudShareSection', 'methodManagerSection', 'dataIOSection'] },
         'tab9': { name: '动态数据', color: '#6ee7b7', modules:['dynamicDataSection'] }, // <--- 全新：动态数据
         'tab10': { name: '卡牌信息', color: '#E0E7FF', modules:['cardInfoSection'] }  // 原来的卡牌顺延
     };
@@ -11058,11 +11747,16 @@ safeBind('confirmSimultaneousBtn', () => {
 
 const originalUpdateAllUI = window.updateAllUI;
         window.updateAllUI = function() {
-            if(originalUpdateAllUI) originalUpdateAllUI();
-            window.renderMethodManager(); 
-            
-            // 【新增插入】全局刷新时，也让随机选择器重置为静止状态
-            if(typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
+            // 重入锁：防止多层包装器互相调用导致死循环
+            if (window._rsaUpdating) { if(originalUpdateAllUI) originalUpdateAllUI(); return; }
+            window._rsaUpdating = true;
+            try {
+                if(originalUpdateAllUI) originalUpdateAllUI();
+                window.renderMethodManager(); 
+                
+                // 【新增插入】全局刷新时，也让随机选择器重置为静止状态
+                if(typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
+            } finally { window._rsaUpdating = false; }
         };
 
 window.renderMethodManager = function() {
@@ -11213,7 +11907,218 @@ window.renderMethodManager = function() {
         });
 
 // 辅助魔法：打开添加方式/编辑方式的窗口
-        window.openMmItemDialog = function(itemId = null, prefillCatId = null) {
+        // ============================================================
+// 【图片库】全部逻辑（胜利 & 淘汰共用）
+// ============================================================
+(function(){
+    // 当前弹窗上下文：'win' 或 'lose'（实际不影响，因为共用一个库）
+    function getLib() { return gameData.imageLibrary || (gameData.imageLibrary = { items: [] }); }
+
+    // 渲染「从图片库选择」弹窗的网格
+    // 【彻底重写】已占用的图全部变暗+点不动+红标"已占用"
+    // 当前正在编辑的图变暗+绿标"已选"+可以点击（换选自己）
+    // 空闲图正常亮度+可以点击
+    function renderLibraryGrid() {
+        const lib = getLib();
+        const grid = document.getElementById('mmImageLibraryGrid');
+        if (!grid) return;
+
+        // 1. 当前正在编辑的卡牌的URL
+        const currentUrl = window._mmCurrentSelectedUrl || document.getElementById('mmItemUrlInput').value || '';
+
+        // 2. 扫描 customMethods，找出所有已被占用的图片URL
+        const usedUrls = window._mmUsedUrls || new Set();
+        if (!window._mmUsedUrls) {
+            usedUrls.clear();
+            // 遍历 win 和 lose 两个分类下的所有方式
+            ['win', 'lose'].forEach(tab => {
+                const tabData = (gameData.customMethods || {})[tab];
+                if (!tabData) return;
+                (tabData.items || []).forEach(method => {
+                    if (method.url) usedUrls.add(method.url);
+                });
+            });
+            window._mmUsedUrls = usedUrls;
+        }
+
+        if (lib.items.length === 0) {
+            grid.innerHTML = '<div class="col-span-4 md:col-span-6 lg:col-span-8 text-center text-gray-400 text-[14px] py-10">图片库为空<br>请先去「管理图片库」添加</div>';
+            return;
+        }
+
+        grid.innerHTML = lib.items.map((it, idx) => {
+            const isSelected  = (it.url === currentUrl);
+            const isOccupied  = usedUrls.has(it.url) && !isSelected;
+            // 已占用 → 变暗 + 点不动 + 红标
+            // 已选(当前编辑) → 变暗 + 可点 + 绿标
+            // 空闲 → 正常 + 可点
+            let dimStyle = '';
+            let pointerOff = '';
+            let badge = '';
+            let cursorStyle = '';
+            if (isSelected) {
+                dimStyle = 'opacity-50';
+                badge = '<div class="absolute top-1 right-1 bg-[#22C55E] text-white text-[9px] font-black px-1 py-0.5 rounded-sm border border-white z-20 shadow">已选</div>';
+                cursorStyle = 'cursor-pointer';
+            } else if (isOccupied) {
+                dimStyle = 'opacity-25';
+                pointerOff = 'pointer-events-none';
+                badge = '<div class="absolute top-1 right-1 bg-[#D84C53] text-white text-[9px] font-black px-1 py-0.5 rounded-sm border border-white z-20 shadow">已占用</div>';
+                cursorStyle = 'cursor-not-allowed';
+            } else {
+                cursorStyle = 'cursor-pointer hover:brightness-110';
+            }
+            return `
+            <div class="relative border-[1.5px] border-[#333333] bg-black flex items-center justify-center overflow-hidden rounded-md mm-lib-pick ${dimStyle} ${pointerOff} ${cursorStyle} transition-all hover:z-10" data-idx="${idx}" style="aspect-ratio:1/1;">
+                <img src="${it.url}" class="w-full h-full object-contain bg-[#111] p-1" crossorigin="anonymous" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%%22 height=%22100%%22 fill=%22%23f3f4f6%22/><text x=%2250%%22 y=%2250%%22 fill=%22%239ca3af%22 font-size=%2216%22 text-anchor=%22middle%22 dy=%22.3em%22>失效</text></svg>'">
+                <div class="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-[10px] sm:text-[11px] truncate px-1 py-0.5 leading-tight text-center">${it.name || ('图'+(idx+1))}</div>
+                ${badge}
+            </div>
+            `;
+        }).join('');
+
+        // 给所有可点的卡片绑定点击
+        grid.querySelectorAll('.mm-lib-pick').forEach(el => {
+            if (el.classList.contains('pointer-events-none')) return; // 已占用的跳过
+            el.onclick = () => {
+                const it = lib.items[+el.dataset.idx];
+                if (!it) return;
+                // 写入URL
+                document.getElementById('mmItemUrlInput').value = it.url;
+                window._mmCurrentSelectedUrl = it.url;
+                // 刷新预览区
+                const preview = document.getElementById('mmItemUrlPreview');
+                if (preview) {
+                    preview.innerHTML = `<img src="${it.url}" class="h-[60px] object-contain border-[1.5px] border-[#333333] bg-black" crossorigin="anonymous" onerror="this.style.display='none'">`;
+                }
+                // 更新按钮文字
+                const lbl = document.getElementById('mmSelectFromLibraryLabel');
+                if (lbl) lbl.textContent = (it.name || '已选图') + ' ✔';
+                // 重新渲染网格（更新变暗/标签状态）
+                renderLibraryGrid();
+                // 延迟关闭，让用户看到反馈
+                setTimeout(() => {
+                    document.getElementById('mmImageLibraryDialog').classList.add('hidden');
+                }, 250);
+            };
+        });
+    }
+
+    // 渲染管理弹窗里的列表
+    function renderLibManagerList() {
+        const lib = getLib();
+        const box = document.getElementById('mmLibList');
+        if (!box) return;
+        if (lib.items.length === 0) { box.innerHTML = '<div class="text-gray-400 text-[12px] text-center py-2">暂无图片</div>'; return; }
+        box.innerHTML = lib.items.map((it, idx) => `
+            <div class="flex items-center gap-1 border-[1px] border-[#333333] px-1 py-0.5 bg-gray-50">
+                <img src="${it.url}" class="w-8 h-10 object-contain bg-black border border-[#333333]" crossorigin="anonymous" onerror="this.style.display='none'">
+                <div class="flex-1 text-[11px] truncate" title="${it.url}">${it.name || ('图'+(idx+1))}</div>
+                <button class="mm-lib-copy text-[10px] bg-[#6D82EE] text-white px-1.5 py-0.5 border border-[#333333]" data-url="${it.url.replace(/"/g,'&quot;')}">复制</button>
+                <button class="mm-lib-del text-[10px] bg-[#D84C53] text-white px-1.5 py-0.5 border border-[#333333]" data-idx="${idx}">删除</button>
+            </div>
+        `).join('');
+        box.querySelectorAll('.mm-lib-copy').forEach(b => b.onclick = () => {
+            navigator.clipboard && navigator.clipboard.writeText(b.dataset.url);
+            b.textContent = '已复制'; setTimeout(() => b.textContent='复制', 800);
+        });
+        box.querySelectorAll('.mm-lib-del').forEach(b => b.onclick = () => {
+            lib.items.splice(+b.dataset.idx, 1); saveData(); renderLibManagerList();
+            // 删除后清除占用缓存，下次打开弹窗会重新扫描
+            window._mmUsedUrls = null;
+            renderLibraryGrid();
+        });
+    }
+
+    // 打开「选择图片」弹窗
+    // 扫描 win+lose 所有已绑定图片 → 全部变暗
+    // 暴露到 window，确保外部一定能调到
+    function openLibraryPicker() {
+        // 1. 记录当前正在编辑的卡牌的URL
+        window._mmCurrentSelectedUrl = (document.getElementById('mmItemUrlInput') || {}).value || '';
+        // 2. 扫描 win + lose 两个tab下所有方式的图片URL
+        const used = new Set();
+        const cm = gameData.customMethods;
+        if (cm) {
+            ['win', 'lose'].forEach(tab => {
+                const tabData = cm[tab];
+                if (!tabData) return;
+                (tabData.items || []).forEach(method => {
+                    if (method.url) used.add(method.url);
+                });
+            });
+        }
+        window._mmUsedUrls = used;
+        // 3. 渲染网格
+        renderLibraryGrid();
+        // 4. 打开弹窗
+        const dlg = document.getElementById('mmImageLibraryDialog');
+        if (dlg) dlg.classList.remove('hidden');
+    }
+    // 暴露到全局，防止作用域问题导致按钮无响应
+    window.__openLibraryPicker = openLibraryPicker;
+
+    // 打开「管理图片库」弹窗
+    function openLibraryManager() {
+        document.getElementById('mmLibBatchInput').value = '';
+        document.getElementById('mmLibSingleName').value = '';
+        document.getElementById('mmLibSingleUrl').value = '';
+        renderLibManagerList();
+        document.getElementById('mmLibraryManagerDialog').classList.remove('hidden');
+    }
+
+    // 单张添加
+    document.getElementById('mmLibAddSingleBtn').onclick = () => {
+        const name = document.getElementById('mmLibSingleName').value.trim();
+        const url = document.getElementById('mmLibSingleUrl').value.trim();
+        if (!url) return alert('请输入图片URL');
+        getLib().items.push({ id: 'lib_'+Date.now(), name: name || ('图'+(getLib().items.length+1)), url });
+        saveData(); renderLibManagerList(); renderLibraryGrid();
+        document.getElementById('mmLibSingleUrl').value = '';
+    };
+
+    // 批量导入：每行一个URL，可选 名称|URL
+    document.getElementById('mmLibBatchImportBtn').onclick = () => {
+        const text = document.getElementById('mmLibBatchInput').value.trim();
+        if (!text) return alert('请粘贴URL列表');
+        const lines = text.split(/[\n;]/).map(s => s.trim()).filter(Boolean);
+        let added = 0;
+        lines.forEach(line => {
+            let name='', url='';
+            if (line.includes('|')) { [name, url] = line.split('|').map(s=>s.trim()); }
+            else url = line;
+            if (!/^https?:\/\//i.test(url)) return; // 只接受 http/https
+            getLib().items.push({ id: 'lib_'+Date.now()+'_'+added, name: name || ('图'+(getLib().items.length+1)), url });
+            added++;
+        });
+        saveData(); renderLibManagerList(); renderLibraryGrid();
+        alert('成功导入 '+added+' 张图片');
+    };
+
+    // 弹窗按钮绑定
+    document.getElementById('mmSelectFromLibraryBtn').onclick = openLibraryPicker;
+    document.getElementById('mmOpenLibraryBtn').onclick = openLibraryManager;
+    document.getElementById('mmOpenLibraryFromMainBtn').onclick = openLibraryManager;
+    document.getElementById('mmImageLibraryManageBtn').onclick = () => {
+        document.getElementById('mmImageLibraryDialog').classList.add('hidden');
+        openLibraryManager();
+    };
+    document.getElementById('mmImageLibraryCancelBtn').onclick = () => {
+        document.getElementById('mmImageLibraryDialog').classList.add('hidden');
+    };
+    document.getElementById('mmLibraryManagerCloseBtn').onclick = () => {
+        document.getElementById('mmLibraryManagerDialog').classList.add('hidden');
+    };
+
+    // 暴露给 openMmItemDialog 使用
+    window.__renderLibraryGrid = renderLibraryGrid;
+    window.__openLibraryPicker = openLibraryPicker;
+})();
+// ============================================================
+// 【图片库】结束
+// ============================================================
+
+window.openMmItemDialog = function(itemId = null, prefillCatId = null) {
             window.v2App.mmTargetId = itemId;
             const data = window.v2App.currentMethodTab === 'lose' ? gameData.customMethods.lose : gameData.customMethods.win;
             
@@ -11224,6 +12129,16 @@ window.renderMethodManager = function() {
                 document.getElementById('mmItemCatDisplay').textContent = cat ? cat.name : '未知分类';
                 document.getElementById('mmItemNumInput').value = item.num || '';
                 document.getElementById('mmItemUrlInput').value = item.url || '';
+                // 【图片库】刷新预览
+                const _preview = document.getElementById('mmItemUrlPreview');
+                const _lbl = document.getElementById('mmSelectFromLibraryLabel');
+                if (item.url) {
+                    if (_preview) _preview.innerHTML = `<img src="${item.url}" class="h-[60px] object-contain border-[1.5px] border-[#333333] bg-black" crossorigin="anonymous" onerror="this.style.display='none'">`;
+                    if (_lbl) _lbl.textContent = '已选图 ✔';
+                } else {
+                    if (_preview) _preview.innerHTML = '';
+                    if (_lbl) _lbl.textContent = '从图片库选择';
+                }
             } else {
                 // 如果是新建，优先选中传入的分类，没有就选 D未分类
                 let cat = null;
@@ -11234,6 +12149,38 @@ window.renderMethodManager = function() {
                 document.getElementById('mmItemCatDisplay').textContent = cat.name;
                 document.getElementById('mmItemNumInput').value = '';
                 document.getElementById('mmItemUrlInput').value = '';
+                // 【图片库】清空预览
+                const _preview = document.getElementById('mmItemUrlPreview');
+                const _lbl = document.getElementById('mmSelectFromLibraryLabel');
+                if (_preview) _preview.innerHTML = '';
+                if (_lbl) _lbl.textContent = '从图片库选择';
+            }
+            // 【关键修复】每次打开弹窗时，强制重新绑定"从图片库选择"按钮
+            // 防止被其他渲染逻辑覆盖导致按钮无响应
+            const pickBtn = document.getElementById('mmSelectFromLibraryBtn');
+            if (pickBtn) {
+                pickBtn.onclick = null;
+                pickBtn.onclick = function() {
+                    if (window.__openLibraryPicker) {
+                        window.__openLibraryPicker();
+                    } else {
+                        // 终极兜底：直接执行打开逻辑
+                        window._mmCurrentSelectedUrl = (document.getElementById('mmItemUrlInput') || {}).value || '';
+                        const used = new Set();
+                        const cm = gameData.customMethods;
+                        if (cm) {
+                            ['win','lose'].forEach(tab => {
+                                const td = cm[tab];
+                                if (!td) return;
+                                (td.items || []).forEach(m => { if(m.url) used.add(m.url); });
+                            });
+                        }
+                        window._mmUsedUrls = used;
+                        if (window.__renderLibraryGrid) window.__renderLibraryGrid();
+                        const dlg = document.getElementById('mmImageLibraryDialog');
+                        if (dlg) dlg.classList.remove('hidden');
+                    }
+                };
             }
             document.getElementById('mmItemDialog').classList.remove('hidden');
         };
@@ -11336,7 +12283,11 @@ window.renderMethodManager = function() {
             const dateStr = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
             const filename = `UNO-淘汰方式条目信息-${dateStr}-${totalItems}.xlsx`;
             
-            const jsonStr = JSON.stringify(gameData.customMethods);
+            // 【图片库】导出时一并带上
+            const jsonStr = JSON.stringify({
+                customMethods: gameData.customMethods,
+                imageLibrary: gameData.imageLibrary || { items: [] }
+            });
             const rows =[];
             for(let i=0; i<jsonStr.length; i+=30000) rows.push([jsonStr.substring(i, i+30000)]);
             
@@ -11367,11 +12318,16 @@ window.renderMethodManager = function() {
                         configArr.forEach(row => { if (row[0]) jsonStr += row[0]; });
                         
                         const parsed = JSON.parse(jsonStr);
-                        if (parsed && parsed.win && parsed.lose) {
-                            gameData.customMethods = parsed;
+                        // 兼容新格式 {customMethods, imageLibrary} 和旧格式直接是 customMethods
+                        const cm = parsed.customMethods || (parsed.win && parsed.lose ? parsed : null);
+                        if (cm && cm.win && cm.lose) {
+                            gameData.customMethods = cm;
+                            if (parsed.imageLibrary) gameData.imageLibrary = parsed.imageLibrary;
                             if(typeof saveData === 'function') saveData();
                             if(typeof window.renderMethodManager === 'function') window.renderMethodManager();
-                            alert("导入配置成功！");
+                            alert("导入配置成功！" + (parsed.imageLibrary ? "（含图片库）" : ""));
+                        } else {
+                            throw new Error("配置格式不正确");
                         }
                     } catch(err) { alert("导入失败: " + err.message); }
                 };
@@ -13436,18 +14392,17 @@ window.nlHideLobby();
                 if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
                 alert("👑 您已作为【裁判/主机】进入游戏！\n全场所有数据和计时以您为准。");
             } 
-            else if (role === 'client') {
+else if (role === 'client') {
                 myRole = 'client';
                 isAudienceMode = false;
-                
-                // 显示选座界面并隐藏大厅主菜单
-                document.getElementById('nlMainMenu').classList.add('hidden');
-                document.getElementById('nlSeatMenu').classList.remove('hidden');
-                document.getElementById('nlSeatMenu').classList.add('flex');
+                window.nlHideLobby();
+                if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
+                if(typeof window.applyClientRestrictions === 'function') window.applyClientRestrictions();
                 
                 // 向主机索取最新的所有数据和正在进行的局数、倒计时进度
                 mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
-            } 
+                alert("🎮 您已作为【玩家】进入游戏！\n您可以操作所有玩家的分数与状态。");
+            }
             else if (role === 'spectator') {
                 myRole = 'client'; 
                 isAudienceMode = true;
@@ -13498,32 +14453,12 @@ window.nlHideLobby();
                     if (typeof updateTimerUI === 'function') updateTimerUI();
                     if (typeof updateTrDisplay === 'function') updateTrDisplay();
 
-                    // 【Bug修复核心】：判断当前是否已经选座
-                    if (mySeatId === null) {
-                        // 如果还没入座，说明是刚加入房间：显示【选座界面】
-                        document.getElementById('nlJoinMenu').classList.add('hidden');
-                        document.getElementById('nlJoinMenu').classList.remove('flex');
-                        document.getElementById('nlSeatMenu').classList.remove('hidden');
-                        document.getElementById('nlSeatMenu').classList.add('flex');
-
-                        // 3. 用收到的数据，画出全场玩家头像供副机选择
-                        const seatGrid = document.getElementById('nlSeatGrid');
-                        seatGrid.innerHTML = gameData.players.filter(p => p.isActive).map(p => `
-                            <div onclick="window.nlSelectSeat(${p.id})" class="flex flex-col items-center border-[3px] border-[#5E4B8B] rounded-xl py-2 shadow-sm cursor-pointer active:scale-95 transition-transform bg-white">
-                                <div class="w-10 h-10 rounded-[6px] border-[2px] border-[#5E4B8B] bg-black overflow-hidden mb-1">
-                                    <img src="${p.avatar}" class="w-full h-full object-cover">
-                                </div>
-                                <span class="font-black text-[15px]" style="color: ${p.color}; -webkit-text-stroke: 0.5px #5E4B8B; paint-order: stroke fill;">${p.name.slice(-1)}</span>
-                            </div>
-                        `).join('');
-                    } else {
-                        // 【如果已经在座位上（游戏中）】：收到新数据立刻全屏疯狂刷新！！！
-                        gameData.currentSessionIndex = -1; // 强制回到全局视角
-                        if(typeof updateViewRounds === 'function') updateViewRounds();
-                        if(typeof recalculateStats === 'function') recalculateStats();
-                        if(typeof updateAllUI === 'function') updateAllUI();
-                        if(typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
-                    }
+                    // 直接全屏刷新数据，不再强制弹窗选座
+                    gameData.currentSessionIndex = -1;
+                    if(typeof updateViewRounds === 'function') updateViewRounds();
+                    if(typeof recalculateStats === 'function') recalculateStats();
+                    if(typeof updateAllUI === 'function') updateAllUI();
+                    if(typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
                 }
                 
                 // --- 下方预留空位：下一步处理战斗中的增量同步操作 ---
@@ -14207,19 +15142,14 @@ if (payload.eliminatedStr) {
             } catch (e) {}
         };
 
-        // 魔法 4：全局拦截与侦听器
+// 魔法 4：全局拦截与侦听器
         
-        // 拦截 1：外层键盘打字分数
+        // 监听 1：外层键盘打字分数（解除限制，允许输入任意玩家分数并同步）
         document.body.addEventListener('input', (e) => {
             if (myRole === 'single') return; 
             const input = e.target.closest('.v2-score-input');
             if (input) {
                 const pid = parseInt(input.dataset.id);
-                if (myRole === 'client' && pid !== mySeatId) {
-                    e.preventDefault();
-                    input.value = '';
-                    return;
-                }
                 if (mqttClient) {
                     mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
                         action: myRole === 'host' ? 'SYNC_SCORE' : 'UPDATE_SCORE', 
@@ -14230,22 +15160,7 @@ if (payload.eliminatedStr) {
             }
         });
 
-        // 拦截 2：副机误触别人胶囊
-        document.addEventListener('click', (e) => {
-            if (myRole === 'client') {
-                const cap = e.target.closest('.v2-player-cap');
-                if (cap) {
-                    const pid = parseInt(cap.dataset.id);
-                    if (pid !== mySeatId) {
-                        alert('📱 警告：作为副机，您只能操作【自己】的玩家位喔！');
-                        e.stopPropagation(); 
-                        return;
-                    }
-                }
-            }
-        }, true);
-
-        // 拦截 3：★终极修复★ 监听 V2 所有弹窗的确认按钮，提取最终状态发给主机！
+        // 监听 2：监听 V2 所有弹窗的确认按钮，将所操作玩家的最新状态精准发给主机
         document.body.addEventListener('click', (e) => {
             if (myRole !== 'client' || !mqttClient) return;
 
@@ -14254,33 +15169,46 @@ if (payload.eliminatedStr) {
             const isTargetBtn = targetIds.some(id => e.target.closest('#' + id));
 
             if (isTargetBtn) {
-                // 延迟 50ms：等待系统把 死亡方式、凶手、改写的分数 全部存进内存后，瞬间打包！
                 setTimeout(() => {
-                    const myScoreInput = document.querySelector(`.v2-score-input[data-id="${mySeatId}"]`);
-                    const currentScore = myScoreInput ? myScoreInput.value : '';
+                    // 获取当前被操作的玩家 ID 列表
+                    const opIds = (window.v2App && window.v2App.tempElim && window.v2App.tempElim.players && window.v2App.tempElim.players.length > 0)
+                        ? window.v2App.tempElim.players
+                        : (v2TargetPlayerId ? [v2TargetPlayerId] : []);
 
-                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
-                        action: 'CLIENT_MUTATED_STATE',
-                        targetId: mySeatId,
-                        scoreVal: currentScore,
-                        eliminatedStr: v2State.eliminated ? v2State.eliminated[mySeatId] : null,
-                        detailsObj: v2State.eliminationDetails ? v2State.eliminationDetails[mySeatId] : null,
-                        revivedUsed: !!v2State.revivedUsed,
-                        revivedPlayerId: v2State.revivedPlayerId
-                    }));
+                    opIds.forEach(targetId => {
+                        const targetScoreInput = document.querySelector(`.v2-score-input[data-id="${targetId}"]`);
+                        const currentScore = targetScoreInput ? targetScoreInput.value : '';
+
+                        mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({
+                            action: 'CLIENT_MUTATED_STATE',
+                            targetId: targetId,
+                            scoreVal: currentScore,
+                            eliminatedStr: v2State.eliminated ? v2State.eliminated[targetId] : null,
+                            detailsObj: v2State.eliminationDetails ? v2State.eliminationDetails[targetId] : null,
+                            revivedUsed: !!v2State.revivedUsed,
+                            revivedPlayerId: v2State.revivedPlayerId
+                        }));
+                    });
                 }, 50);
             }
         });
 
-const origRenderV2ScoreArea = window.renderV2ScoreArea;
+        // ===== 终极修复：直接显式调用，完全绕开 updateAllUI 重入锁 =====
+        // 原版 + 复制版 随机选择器在这里被直接调用，不再经过 updateAllUI 链
+        // （链上 4751 行 wrapper 会被 _rsaUpdating 锁短路，导致复制版永远不刷新）
+        const origRenderV2ScoreArea = window.renderV2ScoreArea;
         window.renderV2ScoreArea = function() {
             if (origRenderV2ScoreArea) origRenderV2ScoreArea();
-            if (typeof window.renderRandomSelector === 'function') window.renderRandomSelector(); // 【新增】让大转盘跟生存状态实时同步
+            // 1) 原版随机选择器
+            if (typeof window.renderRandomSelector === 'function') window.renderRandomSelector();
+            // 2) 复制版随机选择器（直接调，不走 updateAllUI，不被重入锁挡）
+            if (typeof window.renderRandomSelectorMain2 === 'function') window.renderRandomSelectorMain2();
+            // 3) 主机广播
             if (myRole === 'host') window.broadcastV2State();
-            if (myRole === 'client') {
-                document.querySelectorAll('.v2-score-input').forEach(input => {
-                    if (parseInt(input.dataset.id) !== mySeatId) input.readOnly = true; 
-                });
+            // 4) 仍触发 updateAllUI 刷新其他模块；用独立锁名 _rsaUpd2 避免和链上其他锁冲突
+            if (!window._rsaUpd2 && typeof window.updateAllUI === 'function') {
+                window._rsaUpd2 = true;
+                try { window.updateAllUI(); } finally { window._rsaUpd2 = false; }
             }
         };
 
