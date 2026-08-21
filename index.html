@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>UNO INFINITY 终极计分器</title>
+    <!-- 全局错误捕获：防止JS错误导致页面白屏/按钮无反应 -->
+    <script>
+    window.addEventListener('error', function(e) {
+        console.error('[全局错误捕获]', e.message, e.filename, e.lineno, e.colno);
+        if (window.__errorLog) window.__errorLog.push(e.message + ' @ ' + e.filename + ':' + e.lineno);
+        else window.__errorLog = [e.message + ' @ ' + e.filename + ':' + e.lineno];
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+        console.error('[未处理的Promise拒绝]', e.reason);
+    });
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -564,6 +575,33 @@
         <section id="latestStatusSection" class="bg-white/65 border-[3px] sm:border-4 border-[#5E4B8B] rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 shadow-[0_4px_0_#5E4B8B] mb-6">
             <div class="flex flex-col items-center w-full relative">
                 
+                <!-- 最新战况样式设置按钮（右上角） -->
+                <button id="lsSettingsBtn" class="absolute top-0 right-0 z-50 bg-[#6ca5eb] border-[2.5px] border-[#5E4B8B] rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none transition-all hover:brightness-110" onclick="window.toggleLsSettings()">
+                    <i class="fa-solid fa-gear text-white text-base sm:text-lg"></i>
+                </button>
+
+                <!-- 最新战况样式设置面板 -->
+                <div id="lsSettingsPanel" class="hidden w-full bg-white border-[2.5px] border-[#5E4B8B] rounded-xl p-3 mb-3 shadow-[0_3px_0_#5E4B8B] z-50">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-black text-[#5E4B8B] text-xs sm:text-sm">最新战况样式设置</span>
+                        <button onclick="window.toggleLsSettings()" class="text-[#5E4B8B] hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像大小: <span id="lsAvatarSizeVal">32</span>px</label>
+                            <input type="range" id="lsAvatarSizeInput" min="20" max="80" value="32" class="w-full accent-[#6ca5eb]" oninput="window.updateLsSetting('lsAvatarSize', this.value)">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">纵向间距: <span id="lsRowGapVal">12</span>px</label>
+                            <input type="range" id="lsRowGapInput" min="4" max="40" value="12" class="w-full accent-[#6ca5eb]" oninput="window.updateLsSetting('lsRowGap', this.value)">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-2">
+                        <button onclick="window.resetLsSettings()" class="bg-[#FDE047] border-[2px] border-[#5E4B8B] rounded-full px-3 py-1 font-black text-[#5E4B8B] text-[10px] sm:text-xs shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none hover:brightness-110">
+                            恢复默认
+                        </button>
+                    </div>
+                </div>
 
                 <!-- 【容器2：带左右切换的局数选择器】 -->
                 <div class="flex items-center justify-center gap-2 mb-3 w-full px-2">
@@ -1157,7 +1195,12 @@
             
         <!-- 容器4：计时器白色大容器 -->
         <!-- 小白调节区：p-4 sm:p-5 是框内的上下左右留白。rounded-[1.5rem] 是大圆角 -->
-        <div class="w-full bg-white border-[3px] sm:border-[4px] border-[#5E4B8B] rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 shadow-[0_4px_0_#5E4B8B] flex flex-col mb-4 items-center">
+        <div class="relative w-full bg-white border-[3px] sm:border-[4px] border-[#5E4B8B] rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 shadow-[0_4px_0_#5E4B8B] flex flex-col mb-4 items-center">
+            
+            <!-- 玩家胶囊样式设置按钮（计时器区域右上角） -->
+            <button id="rtCapsuleSettingsBtn" class="absolute top-2 right-2 sm:top-3 sm:right-3 z-50 bg-[#6ca5eb] border-[2.5px] border-[#5E4B8B] rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none transition-all hover:brightness-110" onclick="window.toggleRTCapsuleSettings()">
+                <i class="fa-solid fa-gear text-white text-base sm:text-lg"></i>
+            </button>
             
             <!-- 容器4-1：LCD 电子显示屏 -->
             <!-- 小白调节区：bg-[#bfc7b8]是绿灰屏幕底色。h-[70px]控制屏幕高度。lcd-screen-shadow 是我们在第1步写的专属内阴影 -->
@@ -1247,7 +1290,48 @@
                 </div>
 
             <!-- 3. 分数输入大白框 -->
-            <div class=" border-[0px] sm:border-[4px] border-[#5E4B8B] rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-5 mb-4 ">
+            <div class="relative border-[0px] sm:border-[4px] border-[#5E4B8B] rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-5 mb-4 ">
+
+                <!-- 玩家胶囊样式设置面板 -->
+                <div id="rtCapsuleSettingsPanel" class="hidden w-full bg-white border-[2.5px] border-[#5E4B8B] rounded-xl p-3 mb-3 shadow-[0_3px_0_#5E4B8B] z-50">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-black text-[#5E4B8B] text-xs sm:text-sm">玩家胶囊样式设置</span>
+                        <button onclick="window.toggleRTCapsuleSettings()" class="text-[#5E4B8B] hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+                        <!-- 胶囊大小 -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">胶囊高度: <span id="rtCapsuleSizeVal">56</span>px</label>
+                            <input type="range" id="rtCapsuleSizeInput" min="40" max="100" value="56" class="w-full accent-[#6ca5eb]" oninput="window.updateRTCapsuleSetting('rtCapsuleSize', this.value)">
+                        </div>
+                        <!-- 头像大小 -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像大小: <span id="rtAvatarSizeVal">64</span>px</label>
+                            <input type="range" id="rtAvatarSizeInput" min="30" max="120" value="64" class="w-full accent-[#6ca5eb]" oninput="window.updateRTCapsuleSetting('rtAvatarSize', this.value)">
+                        </div>
+                        <!-- 头像水平位置 -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像左右: <span id="rtAvatarOffsetXVal">0</span>px</label>
+                            <input type="range" id="rtAvatarOffsetXInput" min="-30" max="60" value="0" class="w-full accent-[#6ca5eb]" oninput="window.updateRTCapsuleSetting('rtAvatarOffsetX', this.value)">
+                        </div>
+                        <!-- 文字大小 -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">文字大小: <span id="rtTextSizeVal">20</span>px</label>
+                            <input type="range" id="rtTextSizeInput" min="12" max="40" value="20" class="w-full accent-[#6ca5eb]" oninput="window.updateRTCapsuleSetting('rtTextSize', this.value)">
+                        </div>
+                        <!-- 胶囊间距 -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">胶囊间距: <span id="rtCapsuleGapVal">12</span>px</label>
+                            <input type="range" id="rtCapsuleGapInput" min="4" max="40" value="12" class="w-full accent-[#6ca5eb]" oninput="window.updateRTCapsuleSetting('rtCapsuleGap', this.value)">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-2">
+                        <button onclick="window.resetRTCapsuleSettings()" class="bg-[#FDE047] border-[2px] border-[#5E4B8B] rounded-full px-3 py-1 font-black text-[#5E4B8B] text-[10px] sm:text-xs shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none hover:brightness-110">
+                            恢复默认
+                        </button>
+                    </div>
+                </div>
+
                 <!-- 玩家胶囊与分数输入区 (由JS动态生成) -->
                 <!-- 
   ========================================================
@@ -1385,7 +1469,43 @@
 <!-- 【终极进化版】结算方式统计模块 结束      -->
 <!-- ======================================= -->
 
-        <section id="leaderboardSection" class="kawaii-card p-5 mb-6">
+        <section id="leaderboardSection" class="kawaii-card p-5 mb-6 relative">
+            <!-- 排行榜单样式设置按钮（右上角） -->
+            <button id="rbSettingsBtn" class="absolute top-3 right-3 z-50 bg-[#6ca5eb] border-[2.5px] border-[#5E4B8B] rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none transition-all hover:brightness-110" onclick="window.toggleRbSettings()">
+                <i class="fa-solid fa-gear text-white text-base sm:text-lg"></i>
+            </button>
+
+            <!-- 排行榜单样式设置面板 -->
+            <div id="rbSettingsPanel" class="hidden w-full bg-white border-[2.5px] border-[#5E4B8B] rounded-xl p-3 mb-3 shadow-[0_3px_0_#5E4B8B] z-50">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-black text-[#5E4B8B] text-xs sm:text-sm">排行榜单样式设置</span>
+                    <button onclick="window.toggleRbSettings()" class="text-[#5E4B8B] hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像大小: <span id="rbAvatarSizeVal">64</span>px</label>
+                        <input type="range" id="rbAvatarSizeInput" min="40" max="120" value="64" class="w-full accent-[#6ca5eb]" oninput="window.updateRbSetting('rbAvatarSize', this.value)">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像左右: <span id="rbAvatarOffsetXVal">0</span>px</label>
+                        <input type="range" id="rbAvatarOffsetXInput" min="-30" max="60" value="0" class="w-full accent-[#6ca5eb]" oninput="window.updateRbSetting('rbAvatarOffsetX', this.value)">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">名字大小: <span id="rbNameSizeVal">32</span>px</label>
+                        <input type="range" id="rbNameSizeInput" min="16" max="48" value="32" class="w-full accent-[#6ca5eb]" oninput="window.updateRbSetting('rbNameSize', this.value)">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">名字左右: <span id="rbNameOffsetXVal">0</span>px</label>
+                        <input type="range" id="rbNameOffsetXInput" min="0" max="60" value="0" class="w-full accent-[#6ca5eb]" oninput="window.updateRbSetting('rbNameOffsetX', this.value)">
+                    </div>
+                </div>
+                <div class="flex justify-end mt-2">
+                    <button onclick="window.resetRbSettings()" class="bg-[#FDE047] border-[2px] border-[#5E4B8B] rounded-full px-3 py-1 font-black text-[#5E4B8B] text-[10px] sm:text-xs shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none hover:brightness-110">
+                        恢复默认
+                    </button>
+                </div>
+            </div>
+
             <div id="leaderboard" class="space-y-6"></div>
         </section>
 
@@ -1393,7 +1513,41 @@
 <!-- 小白调节区：bg-[#FDFCE6] 完美复原图2淡黄纸张底色，border-[4px] 保持极粗外框 -->
 <section id="achievementsSection" class="relative rounded-[0rem] pt-[0px] pb-6 px-6 sm:px-3 mb-6  border-[0px] border-[#5E4B8B]" style="order: 0; margin-top: 10px;">
     
+    <!-- 全场成就样式设置按钮（右上角） -->
+    <button id="achSettingsBtn" class="absolute top-0 right-2 sm:right-4 z-50 bg-[#6ca5eb] border-[2.5px] border-[#5E4B8B] rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none transition-all hover:brightness-110" onclick="window.toggleAchSettings()">
+        <i class="fa-solid fa-gear text-white text-base sm:text-lg"></i>
+    </button>
 
+    <!-- 全场成就样式设置面板 -->
+    <div id="achSettingsPanel" class="hidden w-full bg-white border-[2.5px] border-[#5E4B8B] rounded-xl p-3 mb-3 shadow-[0_3px_0_#5E4B8B] z-50">
+        <div class="flex justify-between items-center mb-2">
+            <span class="font-black text-[#5E4B8B] text-xs sm:text-sm">全场成就样式设置</span>
+            <button onclick="window.toggleAchSettings()" class="text-[#5E4B8B] hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像大小: <span id="achAvatarSizeVal">60</span>px</label>
+                <input type="range" id="achAvatarSizeInput" min="30" max="120" value="60" class="w-full accent-[#6ca5eb]" oninput="window.updateAchSetting('achAvatarSize', this.value)">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">头像左右: <span id="achAvatarOffsetXVal">0</span>px</label>
+                <input type="range" id="achAvatarOffsetXInput" min="-30" max="60" value="0" class="w-full accent-[#6ca5eb]" oninput="window.updateAchSetting('achAvatarOffsetX', this.value)">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">名字大小: <span id="achNameSizeVal">20</span>px</label>
+                <input type="range" id="achNameSizeInput" min="12" max="40" value="20" class="w-full accent-[#6ca5eb]" oninput="window.updateAchSetting('achNameSize', this.value)">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] sm:text-xs font-bold text-[#5E4B8B]">名字左右: <span id="achNameOffsetXVal">10</span>px</label>
+                <input type="range" id="achNameOffsetXInput" min="0" max="60" value="10" class="w-full accent-[#6ca5eb]" oninput="window.updateAchSetting('achNameOffsetX', this.value)">
+            </div>
+        </div>
+        <div class="flex justify-end mt-2">
+            <button onclick="window.resetAchSettings()" class="bg-[#FDE047] border-[2px] border-[#5E4B8B] rounded-full px-3 py-1 font-black text-[#5E4B8B] text-[10px] sm:text-xs shadow-[0_2px_0_#5E4B8B] active:translate-y-0.5 active:shadow-none hover:brightness-110">
+                恢复默认
+            </button>
+        </div>
+    </div>
     
     <!-- 核心渲染画板：交给 JS 把 15个紧凑小卡牌画在这里 -->
     <div class="flex flex-col w-full" id="achievementsGrid"></div>
@@ -7588,13 +7742,14 @@ els.barRanking.innerHTML = active.map(p => {
                 let shortName = p.name ? p.name.slice(-1) : '?';
 
                 return `
-                <div class="flex items-center rank-row mb-3 sm:mb-4 w-full" data-id="${p.id}">
+                <div class="flex items-center rank-row w-full" data-id="${p.id}" style="margin-bottom: ${window.lsRowGap || 12}px;">
                     
                     <!-- 左侧（名字+头像）保持不动 -->
                     <div class="flex items-center shrink-0 mr-2 sm:mr-3 justify-end w-[65px] sm:w-[85px]">
                         <span class="font-black tracking-widest leading-none drop-shadow-sm mr-1.5 sm:mr-2 text-[20px] sm:text-[24px]" style="color: ${p.color}; -webkit-text-stroke: 2px #5c4c8b; paint-order: stroke fill;">${shortName}</span>
-                        <div class="w-[26px] h-[26px] sm:w-[32px] sm:h-[32px] rounded-[6px] sm:rounded-[8px] border-[2px] sm:border-[2.5px] border-[#5c4c8b] bg-black overflow-hidden flex items-center justify-center shadow-sm shrink-0">
-                            <img src="${p.avatar}" class="w-full h-full object-cover" crossorigin="anonymous">
+                        <!-- 头像：无边框、无圆角、支持异形PNG透明通道，层级最高 -->
+                        <div class="relative shrink-0 z-50 overflow-visible" style="width: ${window.lsAvatarSize || 32}px; height: ${window.lsAvatarSize || 32}px;">
+                            <img src="${p.avatar}" class="w-full h-full object-contain pointer-events-none select-none" crossorigin="anonymous" draggable="false">
                         </div>
                     </div>
                     
@@ -7910,16 +8065,17 @@ let trophiesItems = playerTrophies.map(b => {
             // --- 新增：淘汰及顺位详细统计表 结束 ---
 
 return `
-            <div class="kawaii-card p-3 sm:p-4 relative overflow-hidden" style="border-color: ${borderColor}">
+            <div class="kawaii-card p-3 sm:p-4 relative overflow-visible" style="border-color: ${borderColor}">
              <div class="flex justify-between items-center mb-3 pb-2 border-b-[3px] border-gray-100">
                  <div class="flex items-center gap-2 sm:gap-3">
-                     <div class="relative shrink-0">
-                         <img src="${p.avatar}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-[3px] sm:border-4 border-[#5E4B8B] bg-gray-100 object-cover" crossorigin="anonymous">
-                         ${isChamp ? '<i class="fa-solid fa-crown absolute -top-3 -right-2 text-2xl text-accent drop-shadow-sm rotate-12"></i>' : ''}
+                     <!-- 头像：无边框、无圆角、支持异形PNG透明通道，层级最高，可悬浮于卡片 -->
+                     <div class="relative shrink-0 z-50 overflow-visible" style="width: ${window.rbAvatarSize || 64}px; height: ${window.rbAvatarSize || 64}px; margin-left: ${window.rbAvatarOffsetX || 0}px;">
+                         <img src="${p.avatar}" class="w-full h-full object-contain pointer-events-none select-none" crossorigin="anonymous" draggable="false">
+                         ${isChamp ? '<i class="fa-solid fa-crown absolute -top-3 -right-2 text-2xl text-accent drop-shadow-sm rotate-12 z-50"></i>' : ''}
                      </div>
-                     <div class="min-w-0 flex items-center gap-1 sm:gap-2">
+                     <div class="min-w-0 flex items-center gap-1 sm:gap-2" style="margin-left: ${window.rbNameOffsetX || 0}px;">
                          <div class="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-[#5E4B8B] flex items-center justify-center font-black text-xs sm:text-base" style="background:${rankColor}">${idx+1}</div>
-                         <span class="font-black text-3xl sm:text-4xl truncate max-w-[120px] sm:max-w-[160px] text-stroke tracking-wide" style="color:${p.color}">${p.name}</span>
+                         <span class="font-black truncate max-w-[120px] sm:max-w-[160px] text-stroke tracking-wide" style="color:${p.color}; font-size: ${window.rbNameSize || 32}px;">${p.name}</span>
                      </div>
                  </div>
                  <div class="font-black text-5xl sm:text-6xl tracking-tighter ${p.total > 0 ? 'text-[#4ADE80]' : (p.total < 0 ? 'text-[#F87171]' : 'text-white')} text-stroke">${p.total}</div>
@@ -8143,21 +8299,23 @@ function renderAchievements() {
                         <span class="text-white font-black text-[12px] sm:text-[14px] tracking-widest  leading-none">${title}</span>
                     </div>
 
-                    <!-- 白框内容区：紧凑排版，去掉多余高度，背景为极浅白色 -->
-                    <div class="w-full bg-[white]/65 border-[2.5px] sm:border-[3px] border-[#5E4B8B] rounded-[10px] shadow-[0_4px_0_#5E4B8B] sm:rounded-[12px] pt-[25px] sm:pt-[20px] pb-[8px] sm:pb-[4px] px-1.5 flex ${isCol ? 'flex-col gap-1.5' : 'flex-wrap justify-center gap-1 sm:gap-1.5'} items-center z-10">
+                    <!-- 白框内容区：紧凑排版，去掉多余高度，背景为极浅白色，overflow-visible允许头像跳脱 -->
+                    <div class="w-full bg-[white]/65 border-[2.5px] sm:border-[3px] border-[#5E4B8B] rounded-[10px] shadow-[0_4px_0_#5E4B8B] sm:rounded-[12px] pt-[25px] sm:pt-[20px] pb-[8px] sm:pb-[4px] px-1.5 flex ${isCol ? 'flex-col gap-1.5' : 'flex-wrap justify-center gap-1 sm:gap-1.5'} items-center z-10 overflow-visible" style="padding-left: ${Math.max(6, (window.achAvatarSize || 60) / 2 + 6)}px;">
                         ${innerHTML}
                     </div>
 
                 </div>`;
             };
 
-            // 图2同款 玩家专属胶囊 (方形带圆角头像 + 文字)
+            // 图2同款 玩家大头像+名字 (头像跳脱卡片，支持异形PNG透明通道)
             const uiPlayer = (p) => p ? `
-                <div class="flex items-center gap-[3px] border-[2px] sm:border-[2.5px] border-[#5E4B8B] rounded-[6px] p-[2px] h-[26px] sm:h-[30px] shrink-0 shadow-[0_4px_0_#5E4B8B]" style="background-color: ${p.color};">
-                    <div class="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px] rounded-[4px] border-[1.5px] border-[#5E4B8B] bg-black overflow-hidden shrink-0 flex items-center justify-center">
-                        <img src="${p.avatar}" class="w-full h-full object-cover">
+                <div class="relative flex items-center shrink-0 overflow-visible" style="min-width: ${(window.achAvatarSize || 60) + (window.achNameOffsetX || 70)}px; min-height: ${window.achAvatarSize || 60}px;">
+                    <!-- 大头像：绝对定位，跳脱卡片，层级最高 -->
+                    <div class="absolute z-50 pointer-events-none" style="left: ${window.achAvatarOffsetX || 0}px; top: 50%; transform: translateY(-50%); width: ${window.achAvatarSize || 60}px; height: ${window.achAvatarSize || 60}px;">
+                        <img src="${p.avatar}" class="w-full h-full object-contain pointer-events-none select-none" crossorigin="anonymous" draggable="false">
                     </div>
-                    <span class="font-black text-white text-[12px] sm:text-[14px] text-stroke tracking-widest leading-none px-1 pb-[1px]">${p.name.slice(-1)}</span>
+                    <!-- 玩家名字 -->
+                    <span class="font-black text-white text-stroke tracking-widest leading-none shrink-0" style="font-size: ${window.achNameSize || 20}px; margin-left: ${(window.achAvatarSize || 60) + (window.achAvatarOffsetX || 0) + (window.achNameOffsetX || 10)}px; -webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">${p.name}</span>
                 </div>` : `<div class="bg-gray-200 border-[2px] border-[#5E4B8B] rounded-[6px] px-3 text-gray-400 font-bold text-[12px] h-[26px] flex items-center">无记录</div>`;
 
             // 图2同款 宽体大数字胶囊
@@ -9844,6 +10002,273 @@ function resetV2State() {
     resetTimer(); // 自动复原倒计时
 }
 
+// ========================================================
+// 【实时结算玩家胶囊样式参数】
+// 可通过实时结算区域右上角的设置按钮实时调节
+// ========================================================
+window.rtCapsuleSize = 56;   // 胶囊高度(px)，默认56
+window.rtAvatarSize = 64;    // 头像大小(px)，默认64（可超出胶囊范围）
+window.rtAvatarOffsetX = 0;  // 头像水平偏移(px)，默认0（正数向右，负数向左）
+window.rtTextSize = 20;      // 玩家名字大小(px)，默认20
+window.rtCapsuleGap = 12;    // 胶囊间距(px)，默认12（玩家胶囊之间的纵向间距）
+
+// 【全场成就玩家头像样式参数】
+window.achAvatarSize = 60;    // 头像大小(px)，默认60
+window.achAvatarOffsetX = 0;  // 头像水平偏移(px)，默认0
+window.achNameSize = 20;      // 名字大小(px)，默认20
+window.achNameOffsetX = 10;   // 名字水平偏移(px)，默认10（名字与头像的间距）
+
+// 【最新战况玩家头像样式参数】
+window.lsAvatarSize = 32;     // 头像大小(px)，默认32
+window.lsRowGap = 12;         // 玩家纵向间距(px)，默认12
+
+// 【排行榜单玩家头像样式参数】
+window.rbAvatarSize = 64;     // 头像大小(px)，默认64
+window.rbAvatarOffsetX = 0;   // 头像水平偏移(px)，默认0
+window.rbNameSize = 32;       // 名字大小(px)，默认32
+window.rbNameOffsetX = 0;     // 名字水平偏移(px)，默认0
+
+// 从localStorage加载保存的设置
+(function() {
+    try {
+        const saved = localStorage.getItem('rtCapsuleSettings');
+        if (saved) {
+            const s = JSON.parse(saved);
+            if (s.rtCapsuleSize !== undefined) window.rtCapsuleSize = s.rtCapsuleSize;
+            if (s.rtAvatarSize !== undefined) window.rtAvatarSize = s.rtAvatarSize;
+            if (s.rtAvatarOffsetX !== undefined) window.rtAvatarOffsetX = s.rtAvatarOffsetX;
+            if (s.rtTextSize !== undefined) window.rtTextSize = s.rtTextSize;
+            if (s.rtCapsuleGap !== undefined) window.rtCapsuleGap = s.rtCapsuleGap;
+        }
+    } catch(e) {}
+})();
+
+// 【切换设置面板显示/隐藏】
+window.toggleRTCapsuleSettings = function() {
+    const panel = document.getElementById('rtCapsuleSettingsPanel');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        const inputs = {
+            rtCapsuleSize: 'rtCapsuleSizeInput',
+            rtAvatarSize: 'rtAvatarSizeInput',
+            rtAvatarOffsetX: 'rtAvatarOffsetXInput',
+            rtTextSize: 'rtTextSizeInput',
+            rtCapsuleGap: 'rtCapsuleGapInput'
+        };
+        for (const key in inputs) {
+            const input = document.getElementById(inputs[key]);
+            const valEl = document.getElementById(key + 'Val');
+            if (input) input.value = window[key] || 0;
+            if (valEl) valEl.textContent = window[key] || 0;
+        }
+    }
+};
+
+// 【更新单个参数并重新渲染】
+window.updateRTCapsuleSetting = function(key, value) {
+    window[key] = parseInt(value);
+    const valEl = document.getElementById(key + 'Val');
+    if (valEl) valEl.textContent = value;
+    try {
+        const saved = JSON.parse(localStorage.getItem('rtCapsuleSettings') || '{}');
+        saved[key] = parseInt(value);
+        localStorage.setItem('rtCapsuleSettings', JSON.stringify(saved));
+    } catch(e) {}
+    if (typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
+};
+
+// 【恢复默认设置】
+window.resetRTCapsuleSettings = function() {
+    window.rtCapsuleSize = 56;
+    window.rtAvatarSize = 64;
+    window.rtAvatarOffsetX = 0;
+    window.rtTextSize = 20;
+    window.rtCapsuleGap = 12;
+    try { localStorage.removeItem('rtCapsuleSettings'); } catch(e) {}
+    const defaults = {rtCapsuleSize:56, rtAvatarSize:64, rtAvatarOffsetX:0, rtTextSize:20, rtCapsuleGap:12};
+    for (const key in defaults) {
+        const input = document.getElementById(key + 'Input');
+        const valEl = document.getElementById(key + 'Val');
+        if (input) input.value = defaults[key];
+        if (valEl) valEl.textContent = defaults[key];
+    }
+    if (typeof renderV2ScoreArea === 'function') renderV2ScoreArea();
+};
+
+// ========== 【全场成就样式设置】 ==========
+window.toggleAchSettings = function() {
+    const panel = document.getElementById('achSettingsPanel');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        const inputs = {
+            achAvatarSize: 'achAvatarSizeInput',
+            achAvatarOffsetX: 'achAvatarOffsetXInput',
+            achNameSize: 'achNameSizeInput',
+            achNameOffsetX: 'achNameOffsetXInput'
+        };
+        for (const key in inputs) {
+            const input = document.getElementById(inputs[key]);
+            const valEl = document.getElementById(key + 'Val');
+            if (input) input.value = window[key] || 0;
+            if (valEl) valEl.textContent = window[key] || 0;
+        }
+    }
+};
+
+window.updateAchSetting = function(key, value) {
+    window[key] = parseInt(value);
+    const valEl = document.getElementById(key + 'Val');
+    if (valEl) valEl.textContent = value;
+    try {
+        const saved = JSON.parse(localStorage.getItem('achSettings') || '{}');
+        saved[key] = parseInt(value);
+        localStorage.setItem('achSettings', JSON.stringify(saved));
+    } catch(e) {}
+    if (typeof renderAchievements === 'function') renderAchievements();
+};
+
+window.resetAchSettings = function() {
+    window.achAvatarSize = 60;
+    window.achAvatarOffsetX = 0;
+    window.achNameSize = 20;
+    window.achNameOffsetX = 10;
+    try { localStorage.removeItem('achSettings'); } catch(e) {}
+    const defaults = {achAvatarSize:60, achAvatarOffsetX:0, achNameSize:20, achNameOffsetX:10};
+    for (const key in defaults) {
+        const input = document.getElementById(key + 'Input');
+        const valEl = document.getElementById(key + 'Val');
+        if (input) input.value = defaults[key];
+        if (valEl) valEl.textContent = defaults[key];
+    }
+    if (typeof renderAchievements === 'function') renderAchievements();
+};
+
+// 从localStorage加载全场成就设置
+(function() {
+    try {
+        const s = JSON.parse(localStorage.getItem('achSettings') || '{}');
+        if (s.achAvatarSize !== undefined) window.achAvatarSize = s.achAvatarSize;
+        if (s.achAvatarOffsetX !== undefined) window.achAvatarOffsetX = s.achAvatarOffsetX;
+        if (s.achNameSize !== undefined) window.achNameSize = s.achNameSize;
+        if (s.achNameOffsetX !== undefined) window.achNameOffsetX = s.achNameOffsetX;
+    } catch(e) {}
+})();
+
+// ========== 【最新战况样式设置】 ==========
+window.toggleLsSettings = function() {
+    const panel = document.getElementById('lsSettingsPanel');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        const inputs = { lsAvatarSize: 'lsAvatarSizeInput', lsRowGap: 'lsRowGapInput' };
+        for (const key in inputs) {
+            const input = document.getElementById(inputs[key]);
+            const valEl = document.getElementById(key + 'Val');
+            if (input) input.value = window[key] || 0;
+            if (valEl) valEl.textContent = window[key] || 0;
+        }
+    }
+};
+
+window.updateLsSetting = function(key, value) {
+    window[key] = parseInt(value);
+    const valEl = document.getElementById(key + 'Val');
+    if (valEl) valEl.textContent = value;
+    try {
+        const saved = JSON.parse(localStorage.getItem('lsSettings') || '{}');
+        saved[key] = parseInt(value);
+        localStorage.setItem('lsSettings', JSON.stringify(saved));
+    } catch(e) {}
+    // 重新渲染排行榜
+    if (typeof renderBarRanking === 'function') renderBarRanking();
+};
+
+window.resetLsSettings = function() {
+    window.lsAvatarSize = 32;
+    window.lsRowGap = 12;
+    try { localStorage.removeItem('lsSettings'); } catch(e) {}
+    const defaults = {lsAvatarSize:32, lsRowGap:12};
+    for (const key in defaults) {
+        const input = document.getElementById(key + 'Input');
+        const valEl = document.getElementById(key + 'Val');
+        if (input) input.value = defaults[key];
+        if (valEl) valEl.textContent = defaults[key];
+    }
+    if (typeof renderBarRanking === 'function') renderBarRanking();
+};
+
+// 从localStorage加载最新战况设置
+(function() {
+    try {
+        const s = JSON.parse(localStorage.getItem('lsSettings') || '{}');
+        if (s.lsAvatarSize !== undefined) window.lsAvatarSize = s.lsAvatarSize;
+        if (s.lsRowGap !== undefined) window.lsRowGap = s.lsRowGap;
+    } catch(e) {}
+})();
+
+// ========== 【排行榜单样式设置】 ==========
+window.toggleRbSettings = function() {
+    const panel = document.getElementById('rbSettingsPanel');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        const inputs = {
+            rbAvatarSize: 'rbAvatarSizeInput',
+            rbAvatarOffsetX: 'rbAvatarOffsetXInput',
+            rbNameSize: 'rbNameSizeInput',
+            rbNameOffsetX: 'rbNameOffsetXInput'
+        };
+        for (const key in inputs) {
+            const input = document.getElementById(inputs[key]);
+            const valEl = document.getElementById(key + 'Val');
+            if (input) input.value = window[key] || 0;
+            if (valEl) valEl.textContent = window[key] || 0;
+        }
+    }
+};
+
+window.updateRbSetting = function(key, value) {
+    window[key] = parseInt(value);
+    const valEl = document.getElementById(key + 'Val');
+    if (valEl) valEl.textContent = value;
+    try {
+        const saved = JSON.parse(localStorage.getItem('rbSettings') || '{}');
+        saved[key] = parseInt(value);
+        localStorage.setItem('rbSettings', JSON.stringify(saved));
+    } catch(e) {}
+    // 重新渲染排行榜
+    if (typeof renderLeaderboard === 'function') renderLeaderboard();
+};
+
+window.resetRbSettings = function() {
+    window.rbAvatarSize = 64;
+    window.rbAvatarOffsetX = 0;
+    window.rbNameSize = 32;
+    window.rbNameOffsetX = 0;
+    try { localStorage.removeItem('rbSettings'); } catch(e) {}
+    const defaults = {rbAvatarSize:64, rbAvatarOffsetX:0, rbNameSize:32, rbNameOffsetX:0};
+    for (const key in defaults) {
+        const input = document.getElementById(key + 'Input');
+        const valEl = document.getElementById(key + 'Val');
+        if (input) input.value = defaults[key];
+        if (valEl) valEl.textContent = defaults[key];
+    }
+    if (typeof renderLeaderboard === 'function') renderLeaderboard();
+};
+
+// 从localStorage加载排行榜单设置
+(function() {
+    try {
+        const s = JSON.parse(localStorage.getItem('rbSettings') || '{}');
+        if (s.rbAvatarSize !== undefined) window.rbAvatarSize = s.rbAvatarSize;
+        if (s.rbAvatarOffsetX !== undefined) window.rbAvatarOffsetX = s.rbAvatarOffsetX;
+        if (s.rbNameSize !== undefined) window.rbNameSize = s.rbNameSize;
+        if (s.rbNameOffsetX !== undefined) window.rbNameOffsetX = s.rbNameOffsetX;
+    } catch(e) {}
+})();
+
 // 2. 画出新版的胶囊按钮和分数输入框 (图2、图3像素级复刻厚重投影 + 纵向排版 + 淘汰状态细化)
 
 function renderV2ScoreArea() {
@@ -9986,23 +10411,23 @@ if (isWinner) {
         const leftWidthClass = showInput ? 'w-[35%] sm:w-[30%] justify-start' : 'w-full justify-center';
 
         return `
-        <div class="relative w-full flex items-center justify-between px-2 sm:px-3 py-1.5 sm:py-2 border-[3px] sm:border-[4px] border-[#5E4B8B] rounded-[1rem] sm:rounded-full mb-2 sm:mb-3 transition-all ${cursor} v2-player-cap overflow-visible" data-id="${p.id}" style="background-color: ${capBg}; box-shadow: 0 4px 0 ${shadowColor};">
+        <div class="relative w-full flex items-center justify-between px-2 sm:px-3 border-[3px] sm:border-[4px] border-[#5E4B8B] rounded-[1rem] sm:rounded-full transition-all ${cursor} v2-player-cap overflow-visible" data-id="${p.id}" style="background-color: ${capBg}; box-shadow: 0 4px 0 ${shadowColor}; min-height: ${window.rtCapsuleSize || 56}px; margin-bottom: ${window.rtCapsuleGap || 12}px;">
             ${redLineHtml}
-            <!-- 胶囊内部左侧：头像和名字 -->
-            <div class="flex items-center gap-2 shrink-0 pointer-events-none z-10 transition-all duration-200 ${leftWidthClass}">
-                <!-- 
-                  ========================================================
-                  【小白调节区：玩家头像】
-                  - 头像层级最高(z-50)，可放大撑开胶囊局限
-                  - 无边框、无圆角裁剪、支持原生异形PNG透明通道
-                  - 头像大小：w-12 h-12 (手机) / sm:w-16 sm:h-16 (电脑)
-                  - 如需调整大小，修改下面的 w-/h- 数值即可
-                  ========================================================
-                -->
-                <div class="relative w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center shrink-0 z-50 -ml-1 sm:-ml-2" style="filter: ${avatarFilter};">
-                    <img src="${p.avatar}" class="w-full h-full object-contain pointer-events-none select-none" crossorigin="anonymous" draggable="false">
-                </div>
-                <span class="font-black ${textColor} text-[16px] sm:text-[20px] tracking-widest text-stroke leading-none pb-[1px]" style="-webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">${nameContent}</span>
+            <!-- 
+              ========================================================
+              【玩家头像】绝对定位，跳脱胶囊控制
+              - 头像层级最高(z-50)，可自由超出胶囊上下边界
+              - 无边框、无圆角裁剪、支持原生异形PNG透明通道
+              - 头像大小由 rtAvatarSize 控制，不影响胶囊高度
+              - 头像水平位置由 rtAvatarOffsetX 控制，可左右移动
+              ========================================================
+            -->
+            <div class="absolute z-50 pointer-events-none" style="left: ${window.rtAvatarOffsetX || 0}px; top: 50%; transform: translateY(-50%); width: ${window.rtAvatarSize || 64}px; height: ${window.rtAvatarSize || 64}px; filter: ${avatarFilter};">
+                <img src="${p.avatar}" class="w-full h-full object-contain pointer-events-none select-none" crossorigin="anonymous" draggable="false">
+            </div>
+            <!-- 胶囊内部左侧：名字（左边留出头像空间） -->
+            <div class="flex items-center gap-2 shrink-0 pointer-events-none z-10 transition-all duration-200 ${leftWidthClass}" style="padding-left: ${Math.max(0, (window.rtAvatarSize || 64) + (window.rtAvatarOffsetX || 0) - 8)}px;">
+                <span class="font-black ${textColor} tracking-widest text-stroke leading-none pb-[1px]" style="font-size: ${window.rtTextSize || 20}px; -webkit-text-stroke: 1.5px #5E4B8B; paint-order: stroke fill;">${nameContent}</span>
             </div>
             
             <!-- 胶囊内部中间：分数输入区 (只有 showInput 为真时才显示) -->
@@ -15584,10 +16009,25 @@ if (payload.eliminatedStr) {
 
                 // 【情景 D：时间实时静默对齐】副机完全信奉主机的时钟，拒绝时间回弹和拉扯
                 if (payload.action === 'TIME_SYNC' && myRole === 'client') {
-                    timerRemain = payload.timerRemain;
+                    // 【防回跳机制】倒计时单调递减，秒表单调递增，拒绝旧消息导致的抽搐
+                    // 只有当新值比当前值"更合理"时才更新（倒计时<=当前，秒表>=当前）
+                    // 但允许重置（0）或暂停状态变化
+                    const newRemain = payload.timerRemain;
+                    const newElapsed = payload.trElapsedSeconds;
+                    
+                    // 倒计时：只接受更小或相等的值（单调递减），除非是重置为0或初始状态
+                    if (newRemain <= timerRemain || newRemain === 0 || timerRemain === 0) {
+                        timerRemain = newRemain;
+                    }
+                    
+                    // 秒表：只接受更大或相等的值（单调递增），除非是重置为0
+                    if (newElapsed >= trElapsedSeconds || newElapsed === 0) {
+                        trElapsedSeconds = newElapsed;
+                    }
+                    
                     isTimerRunning = payload.isTimerRunning;
-                    trElapsedSeconds = payload.trElapsedSeconds;
                     trIsRunning = payload.trIsRunning;
+                    
                     if (typeof updateTimerUI === 'function') updateTimerUI();
                     if (typeof updateTrDisplay === 'function') updateTrDisplay();
                 }
