@@ -6,14 +6,44 @@
     <title>UNO INFINITY 终极计分器</title>
     <!-- 全局错误捕获：防止JS错误导致页面白屏/按钮无反应 -->
     <script>
+    window.__initErrors = [];
+    window.__initDone = false;
+    function showGlobalError(msg) {
+        try {
+            var errDiv = document.getElementById('globalErrorDisplay');
+            if (!errDiv) {
+                errDiv = document.createElement('div');
+                errDiv.id = 'globalErrorDisplay';
+                errDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ff4444;color:white;padding:10px;z-index:99999;font-size:12px;max-height:200px;overflow-y:auto;cursor:pointer;';
+                errDiv.title = '点击关闭，双击清除所有数据并刷新';
+                errDiv.onclick = function(){ this.style.display='none'; };
+                errDiv.ondblclick = function() {
+                    if (confirm('确定要清除所有本地数据并刷新吗？这将删除所有游戏记录和设置。')) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                };
+                var target = document.body || document.documentElement;
+                if (target) target.appendChild(errDiv);
+            }
+            errDiv.innerHTML = '<b>JS错误（点击关闭，双击清除数据刷新）：</b><br>' + msg;
+        } catch(err) { console.error('显示错误失败', err); }
+    }
     window.addEventListener('error', function(e) {
-        console.error('[全局错误捕获]', e.message, e.filename, e.lineno, e.colno);
-        if (window.__errorLog) window.__errorLog.push(e.message + ' @ ' + e.filename + ':' + e.lineno);
-        else window.__errorLog = [e.message + ' @ ' + e.filename + ':' + e.lineno];
+        var msg = e.message + ' @ ' + e.filename + ':' + e.lineno;
+        console.error('[全局错误捕获]', msg);
+        window.__initErrors.push(msg);
+        showGlobalError(window.__initErrors.join('<br>'));
     });
     window.addEventListener('unhandledrejection', function(e) {
         console.error('[未处理的Promise拒绝]', e.reason);
     });
+    // 初始化超时检测：5秒后如果还没完成初始化，显示警告
+    setTimeout(function() {
+        if (!window.__initDone) {
+            showGlobalError('初始化超时（5秒），可能是本地数据损坏。<br><b>请点击下方"清除所有数据并刷新"按钮，或双击此红色提示框清除数据。</b>');
+        }
+    }, 5000);
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -1722,8 +1752,8 @@
                                 <th class="py-2 sm:py-3 px-0.5 sm:px-1 border-r-[3px] border-[#5E4B8B] bg-[#93C5FD] text-white text-stroke w-20 sm:w-36 font-black text-xs sm:text-lg tracking-widest whitespace-nowrap">局数</th>
                                 <!-- 赢家自适应占据剩余空间 -->
                                 <th class="py-2 sm:py-3 px-1 border-r-[3px] border-[#5E4B8B] bg-[#86EFAC] text-white text-stroke font-black text-sm sm:text-lg tracking-widest min-w-[80px]">赢家</th>
-                                <!-- 操作按钮 -->
-                                <th class="py-2 sm:py-3 px-0.5 sm:px-1 bg-[#F87171] w-8 sm:w-12"></th>
+                                <!-- 操作按钮 (分段 + 删除) -->
+                                <th class="py-2 sm:py-3 px-0.5 sm:px-1 bg-[#F87171] w-14 sm:w-20"></th>
                             </tr>
                         </thead>
                         <tbody id="sessionTbody">
@@ -1738,7 +1768,10 @@
             <div id="sessionDetailView" class="hidden">
                 <div class="flex justify-between items-center mb-4 border-b-[3px] border-gray-200 pb-3">
                     <h2 class="text-xl sm:text-2xl font-black text-[#5E4B8B] flex items-center tracking-wide" id="sessionDetailTitle"></h2>
-                    <button id="closeSessionDetailBtn" class="w-9 h-9 rounded-full bg-[#F87171] text-white border-[3px] border-[#5E4B8B] flex items-center justify-center shadow-[0_3px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:brightness-110"><i class="fa-solid fa-times text-lg"></i></button>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button id="splitCurrentSessionBtn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#4ADE80] text-white border-[3px] border-[#5E4B8B] flex items-center justify-center shadow-[0_3px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:brightness-110" title="分段"><i class="fa-solid fa-scissors text-lg"></i></button>
+                        <button id="closeSessionDetailBtn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#F87171] text-white border-[3px] border-[#5E4B8B] flex items-center justify-center shadow-[0_3px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:brightness-110"><i class="fa-solid fa-times text-lg"></i></button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto scrollbar-hide border-[4px] border-[#5E4B8B] rounded-[1.5rem] shadow-sm bg-white">
                     <table class="min-w-full text-center text-sm font-bold table-fixed">
@@ -2503,6 +2536,21 @@
 
 
 
+    <!-- 场次分段弹窗 -->
+    <div id="sessionSplitDialog" class="fixed inset-0 bg-[#5E4B8B]/60 backdrop-blur-sm flex items-center justify-center z-[99999] hidden">
+        <div class="kawaii-card p-6 max-w-[320px] w-full text-center shadow-2xl">
+            <h3 class="text-xl font-black mb-4 text-[#5E4B8B]"><i class="fa-solid fa-scissors mr-2 text-[#4ADE80]"></i>场次分段</h3>
+            <p id="splitSessionInfo" class="text-sm font-bold text-gray-600 mb-3"></p>
+            <p class="text-xs text-gray-400 mb-4 leading-relaxed">输入一个局数 X，从第 X 局开始切开，<b>第 X 局及之后的局记为下一个场次</b>（日期不变）。</p>
+            <input type="number" id="sessionSplitInput" placeholder="从第几局切开" class="kawaii-input w-full p-2 mb-5 text-center font-bold text-gray-600">
+            <div class="flex justify-center gap-4">
+                <button id="confirmSplitBtn" class="kawaii-btn bg-success text-white py-2 px-6 shadow-none">确认分段</button>
+                <button id="cancelSplitBtn" class="kawaii-btn bg-gray-200 text-gray-500 py-2 px-6 shadow-none border-gray-300 hover:bg-gray-300">取消</button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- 模块显示与自由拖拽排序设置面板 (修复高度锁死溢出版) -->
     <!-- ======================================================== -->
     <div id="moduleToggleDialog" class="fixed inset-0 bg-[#5E4B8B]/60 backdrop-blur-sm flex items-center justify-center z-[9999] hidden p-4 sm:p-6">
@@ -2830,6 +2878,10 @@
             <button onclick="window.nlSelectIdentity('spectator')" class="w-full bg-[#93C5FD] border-[4px] border-[#5E4B8B] rounded-2xl py-4 flex flex-col items-center justify-center shadow-[0_6px_0_#5E4B8B] active:translate-y-2 active:shadow-none transition-all hover:brightness-105">
                 <span class="font-black text-white text-[24px] tracking-widest text-stroke" style="-webkit-text-stroke: 2.5px #5E4B8B; paint-order: stroke fill;">我是观众</span>
                 <span class="font-bold text-[#5E4B8B] text-xs mt-1 tracking-widest">(只读观战：实时看分数和时间)</span>
+            </button>
+            <!-- 清除数据按钮：用于修复localStorage损坏导致的初始化失败 -->
+            <button onclick="if(confirm('确定要清除所有本地数据并刷新吗？这将删除所有游戏记录和设置。')){localStorage.clear();location.reload();}" class="w-full bg-gray-400 border-[2px] border-[#5E4B8B] rounded-full py-1.5 flex items-center justify-center shadow-[0_3px_0_#5E4B8B] active:translate-y-1 active:shadow-none transition-all hover:brightness-110 mt-2">
+                <span class="font-bold text-white text-[11px] tracking-widest"><i class="fa-solid fa-trash-can mr-1"></i>清除所有数据并刷新（修复按钮无响应）</span>
             </button>
         </div>
 
@@ -6783,9 +6835,14 @@ function renderSessionSection() {
                         <td class="py-2 px-0.5 sm:px-1 border-r-[3px] border-[#5E4B8B] bg-[#E0F2FE] text-white text-stroke font-black ${uniformFontSize} ${uniformTracking} whitespace-nowrap">${rangeStr}</td>
                         <td class="py-1 px-1 border-r-[3px] border-[#5E4B8B] bg-white overflow-hidden">${winnerContent}</td>
                         <td class="py-2 px-0.5 sm:px-1 bg-[#FFE4E6]">
-                            <button class="w-full h-full flex items-center justify-center hover:scale-110 transition-transform delete-session-btn mx-auto" data-idx="${idx}" title="删除">
-                                <i class="fa-solid fa-times text-xl sm:text-3xl text-[#F87171] pointer-events-none"></i>
-                            </button>
+                            <div class="flex items-center justify-center gap-1 sm:gap-2">
+                                <button class="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center hover:scale-110 transition-transform split-session-btn mx-auto" data-idx="${idx}" title="分段">
+                                    <i class="fa-solid fa-scissors text-sm sm:text-lg text-[#4ADE80] pointer-events-none"></i>
+                                </button>
+                                <button class="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center hover:scale-110 transition-transform delete-session-btn mx-auto" data-idx="${idx}" title="删除">
+                                    <i class="fa-solid fa-times text-sm sm:text-lg text-[#F87171] pointer-events-none"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -9306,6 +9363,26 @@ function renderChart() {
         
         }
 
+// ==========================================
+// 【新增】场次分段功能：把一场在某一局处切开，记为下一场次
+// ==========================================
+window.currentSplitSessionIdx = -1;   // 当前准备分段的场次索引
+window.currentDetailSessionIdx = -1;  // 当前详情视图展示的场次索引
+
+window.openSessionSplitModal = function(idx) {
+    if (!gameData.sessions || idx === undefined || idx < 0 || idx >= gameData.sessions.length) return;
+    const session = gameData.sessions[idx];
+    window.currentSplitSessionIdx = idx;
+    const info = document.getElementById('splitSessionInfo');
+    if (info) info.textContent = session.date + ' 场次 · 第 ' + session.start + ' ~ ' + session.end + ' 局';
+    const input = document.getElementById('sessionSplitInput');
+    if (input) {
+        input.value = '';
+        input.placeholder = '从第 ' + (session.start + 1) + ' ~ ' + session.end + ' 局切开';
+    }
+    document.getElementById('sessionSplitDialog').classList.remove('hidden');
+};
+
 function saveData() {
             localStorage.setItem('unoInfinityPro', JSON.stringify(gameData));
             // 【持久化保存】当前进行中的淘汰名单、倒计时、秒表状态，防刷新防关闭
@@ -9668,6 +9745,44 @@ els.playerList.addEventListener('input', e => {
             };
 
             // 场次记录事件绑定
+            // ---- 【新增】场次分段功能事件绑定 ----
+            document.getElementById('cancelSplitBtn').onclick = () => {
+                document.getElementById('sessionSplitDialog').classList.add('hidden');
+            };
+
+            document.getElementById('confirmSplitBtn').onclick = () => {
+                const idx = window.currentSplitSessionIdx;
+                if (idx === undefined || idx < 0 || !gameData.sessions || idx >= gameData.sessions.length) return;
+                const session = gameData.sessions[idx];
+                const input = document.getElementById('sessionSplitInput');
+                const X = parseInt(input.value);
+                if (isNaN(X) || X <= session.start || X > session.end) {
+                    alert('请输入有效的切开局数（必须在 ' + (session.start + 1) + ' ~ ' + session.end + ' 之间）！');
+                    return;
+                }
+                const oldEnd = session.end;
+                session.end = X - 1;
+                gameData.sessions.splice(idx + 1, 0, { date: session.date, start: X, end: oldEnd });
+                window.currentSplitSessionIdx = -1;
+                window.currentDetailSessionIdx = -1;
+                document.getElementById('sessionSplitDialog').classList.add('hidden');
+                // 回到场次列表视图，让用户立刻看到切分结果
+                document.getElementById('sessionListView').classList.remove('hidden');
+                document.getElementById('sessionDetailView').classList.add('hidden');
+                // 分段后场次索引已变化，强制回到全部视角并全局刷新，保证任何模块不错乱
+                gameData.currentSessionIndex = -1;
+                saveData();
+                updateViewRounds();
+                recalculateStats();
+                updateAllUI();
+            };
+
+            document.getElementById('splitCurrentSessionBtn').onclick = () => {
+                if (window.currentDetailSessionIdx !== undefined && window.currentDetailSessionIdx >= 0) {
+                    window.openSessionSplitModal(window.currentDetailSessionIdx);
+                }
+            };
+
             document.getElementById('addSessionBtn').onclick = () => {
                 document.getElementById('sessionDateInput').value = '';
                 document.getElementById('sessionStartInput').value = '';
@@ -9697,6 +9812,13 @@ els.playerList.addEventListener('input', e => {
             };
 
             document.getElementById('sessionTbody').addEventListener('click', e => {
+                const splitBtn = e.target.closest('.split-session-btn');
+                if (splitBtn) {
+                    e.stopPropagation();
+                    window.openSessionSplitModal(parseInt(splitBtn.dataset.idx));
+                    return;
+                }
+
                 const delBtn = e.target.closest('.delete-session-btn');
                 if (delBtn) {
                     e.stopPropagation();
@@ -9728,6 +9850,7 @@ els.playerList.addEventListener('input', e => {
                 const row = e.target.closest('.session-row');
                 if (row) {
                     const idx = parseInt(row.dataset.idx);
+                    window.currentDetailSessionIdx = idx; // 【新增】记录详情正在展示的场次
                     const session = gameData.sessions[idx];
                     
                     const active = gameData.players.filter(p => p.isActive);
@@ -9759,6 +9882,7 @@ els.playerList.addEventListener('input', e => {
             });
 
             document.getElementById('closeSessionDetailBtn').onclick = () => {
+                window.currentDetailSessionIdx = -1; // 【新增】重置详情场次索引
                 document.getElementById('sessionListView').classList.remove('hidden');
                 document.getElementById('sessionDetailView').classList.add('hidden');
             };
@@ -12119,7 +12243,19 @@ window.switchMobileTab = function(tabId) {
     }
 };
 // ====================================================================
-        window.onload = init;
+        // 【安全包装】init函数错误捕获 + 初始化完成标记
+        window.onload = function() {
+            try {
+                init();
+            } catch(e) {
+                console.error('init函数执行错误:', e);
+                if (typeof showGlobalError === 'function') {
+                    showGlobalError('init函数执行错误: ' + e.message + '<br>' + (e.stack || '').substring(0, 500));
+                }
+            } finally {
+                window.__initDone = true;
+            }
+        };
 // ==========================================
 // 【终极纠错霸体引擎：全功能修复版】
 // ==========================================
@@ -15250,22 +15386,54 @@ window.nlHideLobby();
         window.nlAutoConnect = function() {
             roomCode = FIXED_ROOM_CODE;
             console.log('⚡ 正在背景自动连接对讲机固定房间:', roomCode);
-            mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+            // 【安全检查】如果MQTT库未加载（CDN访问失败），创建一个假的mqttClient对象，确保所有publish调用不报错
+            if (typeof mqtt === 'undefined' || !mqtt.connect) {
+                console.warn('⚠️ MQTT库未加载，将以单机模式运行（无法联机同步）。请检查网络或CDN访问。');
+                // 创建假的mqttClient对象，所有方法都是空操作
+                mqttClient = {
+                    publish: function() { console.log('[单机模式] MQTT publish被跳过'); },
+                    subscribe: function() {},
+                    on: function() {},
+                    end: function() {},
+                    connected: false
+                };
+                return;
+            }
+            try {
+                mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
-            mqttClient.on('connect', () => {
-                console.log('📶 对讲机已连接！进入身份决策阶段。房间号:', roomCode);
-                mqttClient.subscribe(`uno_room_${roomCode}`);
-            });
+                mqttClient.on('connect', () => {
+                    console.log('📶 对讲机已连接！进入身份决策阶段。房间号:', roomCode);
+                    mqttClient.subscribe(`uno_room_${roomCode}`);
+                });
 
-            mqttClient.on('message', window.handleMqttMessage);
+                mqttClient.on('message', window.handleMqttMessage);
+                
+                mqttClient.on('error', (err) => {
+                    console.error('MQTT连接错误:', err);
+                });
+            } catch(e) {
+                console.error('MQTT连接异常:', e);
+                // 连接失败时也创建假的mqttClient对象
+                mqttClient = {
+                    publish: function() { console.log('[单机模式] MQTT publish被跳过'); },
+                    subscribe: function() {},
+                    on: function() {},
+                    end: function() {},
+                    connected: false
+                };
+            }
         };
 
 // 统一身份选择中枢，彻底消除繁琐输入
         window.nlSelectIdentity = function(role) {
+            try {
             if (role === 'host') {
                 myRole = 'host';
                 // 主机连接上后，立刻拉取一次全量数据同步（防止刷新后不同步），并向其他客户端广播自己为主机
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                if (mqttClient && mqttClient.publish) {
+                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                }
                 window.nlHideLobby();
                 if(typeof window.refreshTopRoomCode === 'function') window.refreshTopRoomCode();
                 alert("👑 您已作为【裁判/主机】进入游戏！\n全场所有数据和计时以您为准。");
@@ -15278,7 +15446,9 @@ else if (role === 'client') {
                 if(typeof window.applyClientRestrictions === 'function') window.applyClientRestrictions();
                 
                 // 向主机索取最新的所有数据和正在进行的局数、倒计时进度
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                if (mqttClient && mqttClient.publish) {
+                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                }
                 alert("🎮 您已作为【玩家】进入游戏！\n您可以操作所有玩家的分数与状态。");
             }
             else if (role === 'spectator') {
@@ -15289,8 +15459,17 @@ else if (role === 'client') {
                 if(typeof window.applyClientRestrictions === 'function') window.applyClientRestrictions();
                 
                 // 索取主机正在进行的信息和倒计时
-                mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                if (mqttClient && mqttClient.publish) {
+                    mqttClient.publish(`uno_room_${roomCode}`, JSON.stringify({ action: 'REQ_FULL_SYNC' }));
+                }
                 alert("📺 您已作为【观众】进入游戏！\n您可实时静默查看局数和倒计时进度。");
+            }
+            } catch(e) {
+                console.error('[nlSelectIdentity] 执行错误:', e);
+                if (typeof showGlobalError === 'function') {
+                    showGlobalError('进入游戏出错: ' + e.message);
+                }
+                alert("进入游戏时出错: " + e.message + "\n\n请尝试点击页面下方'清除所有数据并刷新'按钮。");
             }
         };
 
